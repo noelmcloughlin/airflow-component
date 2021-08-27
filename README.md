@@ -6,6 +6,8 @@ Federated Apache-Airflow idempotent Install and Upgrade solution
 
 The airflow-component solution is a very standardized reference deployment architecture for apache airflow, designed to encapsulate, abstract, and accelerate deployment of a federated, multi-tenant implemenation architecture using Configuration as Code. The reference architecture follows this pattern:
 
+![Airflow-Component](/img/airflow-component.png?raw=true "Federated Airflow, Reference Deployment Architecture")
+
     primary:   controller01.controller.net   user: controller\airflowservice  - Active Scheduler, UI, worker
     secondary: controller02.controller.net   user: controller\airflowservice  - Standby Scheduler, UI, worker
 
@@ -31,9 +33,9 @@ The airflow-component solution is a very standardized reference deployment archi
 
 # PREPARE
 
-Commission your infrastructure inline with [our reference ticketing architecture](https://github.com/noelmcloughlin/airflow-component/blob/master/INFRA.md) guide.
+Declare your configuration in [https:/github.com/noelmcloughlin/airflow-component/blob/master/sitedata.j2](https://github.com/noelmcloughlin/airflow-component/blob/master/sitedata.j2)
 
-Review Customer configuration in [https:/github.com/noelmcloughlin/airflow-component/blob/master/sitedata.j2](https://github.com/noelmcloughlin/airflow-component/blob/master/sitedata.j2)
+Commission your infrastructure inline with [our reference ticketing architecture](https://github.com/noelmcloughlin/airflow-component/blob/master/INFRA.md) guide.
 
 Logon as airflowservice on each participating host and user, and ensure proxy is published (in ~/.bashrc).
 

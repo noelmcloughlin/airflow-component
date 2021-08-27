@@ -1,6 +1,8 @@
 # AIRFLOW INFRA PLANNING
 
-The implementation architecture for multi-tenant, federated, repeatable deployments of Apache Airflow requires "compute-networking" design. To assist sprint planning, this document is an exhaustive list of "ticket slogans" which to be refined as tasks for your infra team. The resulting infrastructure can be consumed by [airflow-component installer](https://github.com/noelmcloughlin/airflow-component#readme) or any other installer based on [Official airflow docs](https://airflow.apache.org/docs/apache-airflow/stable/installation.html):
+The implementation architecture for multi-tenant, federated, repeatable deployments of Apache Airflow requires "compute-networking" design. To assist sprint planning, this document is an exhaustive list of "ticket slogans" which to be refined as tasks for your infra team to be consumed by [airflow-component installer](https://github.com/noelmcloughlin/airflow-component#readme) or another installer, based on [Official airflow docs](https://airflow.apache.org/docs/apache-airflow/stable/installation.html):
+
+![Airflow-Component](/img/airflow-component.png?raw=true "Federated Airflow, Reference Deployment Architecture")
 
     primary:   controller01.controller.net  user: controller\airflowservice  - Active Scheduler, UI, worker
     secondary: controller02.controller.net  user: controller\airflowservice  - Standby Scheduler, UI, worker
@@ -63,7 +65,7 @@ We will install apache-airflow on all servers using "Salter" Infra as Code (IaC)
     *.cloudsmith.io:443
     *.packagecloud.io
     *.saltproject.io:443
-    *.Linux @ Duke :443
+    *.linux.duke.edu :443
     *.cloudfront.net:443
 
     *.ftp.fi.muni.cz:443
