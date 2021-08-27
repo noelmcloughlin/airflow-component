@@ -1,10 +1,6 @@
-# PROJECT PLAN: FEDERATED SCALABLE APACHE AIRFLOW
+# INFRA FOR AIRFLOW-COMPONENT
 
-DevOps, SRE, and Data Engineers need to design a scalable Apache-Airflow deployment to support multi-tenancy. The compute implemenation architecture can be unclear. This guide explains what series of "jira" tickets are needed for a federated airflow deployment.
-
-Note: It is based on real deployemnt supported by https://github.com/noelmcloughlin/airflow-component
-
-Here is the federated multi-tenant reference architecture used in this document:
+DevOps, SRE, and Data Engineers need to design a scalable Apache-Airflow deployment to support multi-tenancy. The compute implemenation architecture can be unclear. This guide explains what series of "jira" tickets are needed for a federated airflow deployment described in the [README](https://github.com/noelmcloughlin/airflow-component#readme) and this reference architecture:
 
     primary:   controller01.controller.net  user: controller\airflowservice  - Active Scheduler, UI, worker
     secondary: controller02.controller.net  user: controller\airflowservice  - Standby Scheduler, UI, worker

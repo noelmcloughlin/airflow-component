@@ -2,35 +2,36 @@
 
 Federated Apache-Airflow idempotent Install and Upgrade solution
 
-## Reference Deployment Architecture
+# Reference Deployment Architecture
 
-The supported reference solution architecture is highly scalable:
+The airflow-component solution is a very standardized reference deployment architecture for apache airflow, designed to encapsulate, abstract, and accelerate deployment of a federated, multi-tenant implemenation architecture using Configuration as Code. The reference architecture follows this pattern:
 
     primary:   controller01.controller.net   user: controller\airflowservice  - Active Scheduler, UI, worker
     secondary: controller02.controller.net   user: controller\airflowservice  - Standby Scheduler, UI, worker
 
-    worker: worker01.applesdev.net     user: applesdev\airflowservice
-    worker: worker02.applesdev.net     user: applesdev\airflowservice
-    worker: worker01.applestest.net    user: applestest\airflowservice
-    worker: worker02.applestest.net    user: applestest\airflowservice
     worker: worker01.apples.net        user: apples\airflowservice
     worker: worker02.apples.net        user: apples\airflowservice
+    worker: worker01.applestest.net    user: applestest\airflowservice
+    worker: worker02.applestest.net    user: applestest\airflowservice
+    worker: worker01.applesdev.net     user: applesdev\airflowservice
+    worker: worker02.applesdev.net     user: applesdev\airflowservice
 
-    worker: worker01.orangesdev.net    user: orangesdev\airflowservice
-    worker: worker02.orangesdev.net    user: orangesdev\airflowservice
-    worker: worker01.orangestest.net   user: orangestest\airflowservice
-    worker: worker02.orangestest.net   user: orangestest\airflowservice
     worker: worker01.oranges.net       user: oranges\airflowservice
     worker: worker02.oranges.net       user: oranges\airflowservice
+    worker: worker01.orangestest.net   user: orangestest\airflowservice
+    worker: worker02.orangestest.net   user: orangestest\airflowservice
+    worker: worker01.orangesdev.net    user: orangesdev\airflowservice
+    worker: worker02.orangesdev.net    user: orangesdev\airflowservice
 
     worker: worker01.edge.net          user: edge\airflowservice
     worker: worker02.edge.net          user: edge\airflowservice
     worker: worker01.fog.net           user: airflowservice
     worker: worker02.fog.net           user: airflowservice
 
+
 # PREPARE
 
-Commission your infrastructure - Refer to INFRA document in this repository.
+Commission your infrastructure inline with [our reference ticketing architecture](https://github.com/noelmcloughlin/airflow-component/blob/master/INFRA.md) guide.
 
 Review Customer configuration in [https:/github.com/noelmcloughlin/airflow-component/blob/master/sitedata.j2](https://github.com/noelmcloughlin/airflow-component/blob/master/sitedata.j2)
 
@@ -255,7 +256,7 @@ Fix issues (updating webserver_config.py file) and try again (start Airflow UI [
 
 # SUPPORT CHANNELS
 
-For IaC Installer support raise issue at https://github.com/saltstack-formulas/salter/issues and ping @noelmcloughlin. Fall back to the official airflow documentation if necessary: https://airflow.apache.org/docs/apache-airflow/stable/installation.html
+For IaC Installer support raise issue at https://github.com/noelmcloughlin/airflow-component
 
 ## References
 
