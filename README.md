@@ -214,7 +214,7 @@ Reinstall and/or check clusering status and resolve inconsistent state.
 
 If other rabbit node is ready and able, join succeeds.
 
-If other node is not ready, the join fails. This is expected and can either be ignored on fresh installs:
+If other node is not ready, the join fails. This is expected and can be ignored on fresh installs:
 
     [ERROR   ] Command '/usr/sbin/rabbitmqctl' failed with return code: 69
     [ERROR   ] stdout: Clustering node rabbit@worker02 with rabbit@worker01
@@ -261,7 +261,6 @@ For IaC Installer support raise issue at https://github.com/noelmcloughlin/airfl
 ## References
 
 ### IaC Installer
-- https://github.com/noelmcloughlin/airflow-component (i.e. this repo)
 - https://github.com/saltstack-formulas/airflow-formula
 - https://github.com/saltstack-formulas/salter
 
