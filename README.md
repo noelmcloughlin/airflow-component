@@ -1,35 +1,35 @@
 # Introduction
-Apache-Airflow idempotent Install and Upgrade on participating hosts and users, using open source iac from saltstack-formulas.
+Apache-Airflow idempotent Install and Upgrade on participating hosts and users, using open source IaC installer.
 
 ## Reference Deployment Architecture
 
 The installing process targets this federated deployment architecture:
 
-    host: primary.controller.net     user: controller\airflowservice  - Active Scheduler, UI, worker
-    host: secondary.controller.net   user: controller\airflowservice  - Standby Scheduler, UI, worker
+    primary:   controller01.controller.net   user: controller\airflowservice  - Active Scheduler, UI, worker
+    secondary: controller02.controller.net   user: controller\airflowservice  - Standby Scheduler, UI, worker
 
-    host: worker01.applesdev.net     user: applesdev\airflowservice
-    host: worker02.applesdev.net     user: applesdev\airflowservice
-    host: worker01.applestest.net    user: applestest\airflowservice
-    host: worker02.applestest.net    user: applestest\airflowservice
-    host: worker01.apples.net        user: apples\airflowservice
-    host: worker02.apples.net        user: apples\airflowservice
+    worker: worker01.applesdev.net     user: applesdev\airflowservice
+    worker: worker02.applesdev.net     user: applesdev\airflowservice
+    worker: worker01.applestest.net    user: applestest\airflowservice
+    worker: worker02.applestest.net    user: applestest\airflowservice
+    worker: worker01.apples.net        user: apples\airflowservice
+    worker: worker02.apples.net        user: apples\airflowservice
 
-    host: worker01.orangesdev.net    user: orangesdev\airflowservice
-    host: worker02.orangesdev.net    user: orangesdev\airflowservice
-    host: worker01.orangestest.net   user: orangestest\airflowservice
-    host: worker02.orangestest.net   user: orangestest\airflowservice
-    host: worker01.oranges.net       user: oranges\airflowservice
-    host: worker02.oranges.net       user: oranges\airflowservice
+    worker: worker01.orangesdev.net    user: orangesdev\airflowservice
+    worker: worker02.orangesdev.net    user: orangesdev\airflowservice
+    worker: worker01.orangestest.net   user: orangestest\airflowservice
+    worker: worker02.orangestest.net   user: orangestest\airflowservice
+    worker: worker01.oranges.net       user: oranges\airflowservice
+    worker: worker02.oranges.net       user: oranges\airflowservice
 
-    host: worker01.edge.net          user: edge\airflowservice
-    host: worker02.edge.net          user: edge\airflowservice
-    host: worker01.fog.net           user: airflowservice
-    host: worker02.fog.net           user: airflowservice
+    worker: worker01.edge.net          user: edge\airflowservice
+    worker: worker02.edge.net          user: edge\airflowservice
+    worker: worker01.fog.net           user: airflowservice
+    worker: worker02.fog.net           user: airflowservice
 
 # PREPARE
 
-Commission your infrastructure - Refer to INFRA document in this repo.
+Commission your infrastructure - Refer to INFRA document in this repository.
 
 Review Customer configuration in https:/github.com/noelmcloughlin/airflow-component/blob/master/sitedata.j2
 
@@ -42,7 +42,7 @@ Logon as airflowservice on each participating host and user, and ensure proxy is
     export no_proxy="localhost,*.net"
     export PATH=${PATH}:/usr/local/bin
 
-Plan to deploy primary/secondary hosts before workers start trying to contact controllers.
+Plan to deploy primary/secondary hosts before workers.
 
 Optionally wipe data on any-all servers before reinstall. If unsure, skip this command:
 
@@ -58,7 +58,7 @@ Logon as airflowservice on participating hosts and users. Get the software:
         git clone https://github.com/noelmcloughlin/airflow-${name}
     done && cd ~/dags && rm -fr * && cp -Rp ../airflow-dags/dags/* .; chmod +x $( find . -name *.py)
 
-Note, if some hosts have no access to github (i.e. fog), use some other transfer method (i.e. sftp):
+Note, for hosts with no network connectivity to your git repo (i.e. fog), use some other transfer method (i.e. sftp):
 
     cd ~ && tar -cvf air.tar airflow-component airflow-dags
     sftp airflowservice@worker01.fog.net; sftp airflowservice@worker02.fog.net
@@ -71,7 +71,7 @@ Note, if some hosts have no access to github (i.e. fog), use some other transfer
     rm -fr ~/airflow-component ~/airflow-dags
     tar xvf ~/air.tar && rm tar.tar
 
-On each participating host starting with primary/secondary, install Airflow. The process takes ~15mins:
+On each participating host (begin with primary/secondary), install Airflow. The process takes ~15mins:
 
     ~/airflow-component/installer.sh | tee ~/iac-installer.log
 
@@ -80,7 +80,7 @@ Note, the installation summary may indicate failures. Evaluate result as follows
     - Success if 0 task fails: cluster join worked too. OK!
     - Success if 1 task fails: cluster join is best effort, other node was not ready. OK!
     - Retryable if >1 task fails: sometimes the 2nd attempt just works! NOK!
-    - Failure if retry is not success. Review TROUBLESHOOTING secition below.
+    - Failure if retry is not success. Review [TROUBLESHOOTING](#TROUBLESHOOTING) section below.
 
 
 # POST INSTALL
