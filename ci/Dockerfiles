@@ -1,0 +1,184 @@
+# https://docs.microsoft.com/en-us/azure/devops/pipelines/process/container-phases?view=azure-devops
+---
+# ado-cuelang
+
+FROM node:14-alpine
+RUN apk add --no-cache --virtual .pipeline-deps readline linux-pam \
+ && apk add curl bash sudo shadow \
+ && apk del .pipeline-deps \
+ && curl -fLO https://github.com/cuelang/cue/releases/download/v0.3.2/cue_v0.3.2_linux_amd64.tar.gz \
+ && tar zxvf cue_v0.3.2_linux_amd64.tar.gz -C /usr/bin cue \
+ && rm cue_v0.3.2_linux_amd64.tar.gz \
+    # Remove packages installed alongside `curl`
+ && apk del ca-certificates nghttp2-libs libcurl curl \
+ && rm -rf /var/cache/apk/*
+
+LABEL "com.azure.dev.pipelines.agent.handler.node.path"="/usr/local/bin/node"
+CMD [ "node" ]
+
+---
+# ado-jinja2
+
+FROM nikolaik/python-nodejs:python3.8-nodejs12-alpine
+
+SHELL ["/bin/ash", "-e", "-o", "pipefail", "-c"]
+RUN apk add --no-cache --virtual .pipeline-deps readline linux-pam \
+ && apk add bash sudo shadow \
+ && apk del .pipeline-deps \
+ && pip install jinja-cli j2cli \
+ && rm -rf /var/cache/apk/*
+
+LABEL "com.azure.dev.pipelines.agent.handler.node.path"="/usr/local/bin/node"
+CMD [ "node" ]
+
+---
+# ado-commitlint
+
+FROM node:14-alpine
+RUN apk add --no-cache --virtual .pipeline-deps readline linux-pam \
+ && apk add bash sudo shadow \
+ && apk add git \
+ && apk del .pipeline-deps \
+ && rm -rf /var/cache/apk/* \
+ && npm install --global --save-dev husky @commitlint/cli \
+    @commitlint/config-angular \
+    @commitlint/config-angular-type-enum \
+    @commitlint/config-conventional \
+    @commitlint/config-lerna-scopes lerna \
+    @commitlint/config-patternplate
+
+LABEL "com.azure.dev.pipelines.agent.handler.node.path"="/usr/local/bin/node"
+CMD [ "node" ]
+
+---
+# ado-rubocop
+
+FROM node:14-alpine
+RUN apk update && apk upgrade \
+  && apk add --no-cache --virtual .pipeline-deps readline linux-pam \
+  && apk add bash sudo shadow \
+  && apk add --no-cache ruby-full \
+  && gem install text-table rubocop \
+  && apk del .pipeline-deps \
+  && rm -rf /var/cache/apk/*
+
+LABEL "com.azure.dev.pipelines.agent.handler.node.path"="/usr/local/bin/node"
+CMD [ "node" ]
+
+---
+# ado-precommit
+
+FROM nikolaik/python-nodejs:python3.8-nodejs12-alpine
+
+SHELL ["/bin/ash", "-e", "-o", "pipefail", "-c"]
+
+RUN apk add --no-cache --virtual .pipeline-deps readline linux-pam \
+ && apk add --no-cache bash sudo shadow \
+ && apk add --no-cache git ruby-full ruby-dev \
+ && apk del .pipeline-deps \
+ && pip install pre-commit  pre-commit-hooks \
+ && rm -rf /var/cache/apk/*
+
+LABEL "com.azure.dev.pipelines.agent.handler.node.path"="/usr/local/bin/node"
+CMD [ "node" ]
+
+---
+# ado-dindruby
+
+# git clone https://github.com/docker-library/docker.git
+# cd 20.10/
+# docker image build .
+
+FROM node:14-alpine
+
+RUN apk update && apk upgrade \
+  && apk add --no-cache --virtual .pipeline-deps readline linux-pam \
+  && apk add --no-cache bash sudo shadow \
+  && apk add --no-cache git ruby-full ruby-dev gcc make build-base \
+  && gem install etc \
+  && gem install bundler -v 2.2.16
+
+RUN apk add --no-cache ca-certificates openssh-client
+RUN [ ! -e /etc/nsswitch.conf ] && echo 'hosts: files dns' > /etc/nsswitch.conf
+
+ENV DOCKER_VERSION 20.10.6
+RUN set -eux; \
+        \
+        apkArch="$(apk --print-arch)"; \
+        case "$apkArch" in \
+                'x86_64') \
+                        url='https://download.docker.com/linux/static/stable/x86_64/docker-20.10.6.tgz'; \
+                        ;; \
+                'armhf') \
+                        url='https://download.docker.com/linux/static/stable/armel/docker-20.10.6.tgz'; \
+                        ;; \
+                'armv7') \
+                        url='https://download.docker.com/linux/static/stable/armhf/docker-20.10.6.tgz'; \
+                        ;; \
+                'aarch64') \
+                        url='https://download.docker.com/linux/static/stable/aarch64/docker-20.10.6.tgz'; \
+                        ;; \
+                *) echo >&2 "error: unsupported architecture ($apkArch)"; exit 1 ;; \
+        esac; \
+        \
+        wget -O docker.tgz "$url"; \
+        \
+        tar --extract \
+                --file docker.tgz \
+                --strip-components 1 \
+                --directory /usr/local/bin/ \
+        ; \
+        rm docker.tgz; \
+        \
+        dockerd --version; \
+        docker --version
+
+COPY modprobe.sh /usr/local/bin/modprobe
+COPY docker-entrypoint.sh /usr/local/bin/
+
+ENV DOCKER_TLS_CERTDIR=/certs
+RUN mkdir /certs /certs/client && chmod 1777 /certs /certs/client
+RUN apk del .pipeline-deps \
+  && rm -rf /var/cache/apk/*
+
+LABEL "com.azure.dev.pipelines.agent.handler.node.path"="/usr/local/bin/node"
+ENTRYPOINT ["docker-entrypoint.sh"]
+CMD [ "node" ]
+
+---
+# ado-semanticrelease
+
+FROM node:14-alpine
+
+ENV PATH=$PATH:/usr/local/go/bin
+ARG GOLANG_VERSION=1.16.3
+
+RUN apk update && apk upgrade \
+  && apk add --no-cache --virtual .pipeline-deps readline linux-pam \
+  && apk add bash sudo shadow \
+  && apk add go git gcc bash musl-dev openssl-dev ca-certificates \
+  && update-ca-certificates \
+  && wget https://dl.google.com/go/go$GOLANG_VERSION.src.tar.gz \
+  && tar -C /usr/local -xzf go$GOLANG_VERSION.src.tar.gz \
+  && cd /usr/local/go/src \
+  && ./make.bash \
+  && rm /go$GOLANG_VERSION.src.tar.gz \
+  && apk del go \
+  && go version \
+  && npm install semantic-release@17 \
+  && ln -s /usr/local/go/src/node_modules/.bin/semantic-release /usr/bin/semantic-release \
+  && wget -O v1.0.5.tar.gz https://github.com/maintainer-org/maintainer/archive/refs/tags/v1.0.5.tar.gz \
+  && tar xvf v1.0.5.tar.gz \
+  && cd maintainer-1.0.5 \
+  && GO111MODULE=on go get github.com/hashicorp/hcl/hcl/printer \
+  && ( GO111MODULE=on go get github.com/maintainer-org/maintainer || (go mod init && go mod vendor)) \
+  && GO111MODULE=on go get github.com/maintainer-org/maintainer \
+  && cd .. \
+  && rm -fr maintainer-1.0.5 \
+  && ln -s /root/go/bin/maintainer /usr/bin/maintainer \
+  && apk del .pipeline-deps go \
+  && rm -rf /var/cache/apk/*
+
+LABEL "com.azure.dev.pipelines.agent.handler.node.path"="/usr/local/bin/node"
+CMD [ "node" ]
+...

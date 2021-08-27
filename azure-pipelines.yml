@@ -1,0 +1,175 @@
+# -*- coding: utf-8 -*-
+# vim: ft=yaml
+# https://aka.ms/yaml
+---
+trigger:
+  branches:
+    include: [main, test-me-*]
+  tags:
+    include: ['*']
+
+pool:
+  name: 'default'   # or custom
+
+resources:
+  containers:
+  - container: jinja2
+    image: 'noelmcloughlin/ado-jinja2:1.1.3'
+  - container: cuelang
+    image: 'noelmcloughlin/ado-cuelang:0.3.2'
+  - container: commitlint
+    image: 'noelmcloughlin/ado-commitlint:12.1.1'
+  - container: dindruby
+    image: 'noelmcloughlin/ado-dindruby:2.6.7-rc0'
+  - container: rubocop
+    image: 'noelmcloughlin/ado-rubocop:1.13.0'
+  - container: semanticrelease
+    image: 'noelmcloughlin/ado-semanticrelease:17.4.2'
+  - container: precommit
+    image: 'noelmcloughlin/ado-precommit:2.12.1'
+    entrypoint: ['/bin/bash', '-c']
+
+  repositories:
+  - repository: gh_salter
+    type: github
+    endpoint: github.com_noelmcloughlin
+    name: noelmcloughlin/salter
+    ref: ado
+
+variables:
+  compname: airflow-component
+  homedir: $(Build.SourcesDirectory)
+  workdir: $(Build.BinariesDirectory)
+
+stages:
+  - stage: LINT
+    jobs:
+      - job: commitlint
+        displayName: 'Conventional commit'
+        container: commitlint
+        steps:
+          - script: |
+              # Add `upstream` remote to get access to `upstream/main`
+              git remote add upstream https://github.com/noelmcloughlin/airflow-component
+              git fetch --all
+              # Set default commit hashes for `--from` and `--to`
+              export COMMITLINT_FROM="$(git merge-base upstream/main HEAD)"
+              export COMMITLINT_TO="${CI_COMMIT_SHA}"
+              # Run `commitlint`
+              commitlint --from "${COMMITLINT_FROM}" --to "${COMMITLINT_TO}" --verbose
+            env:
+              HTTPS_PROXY: http://InfraProxy:8080
+              HTTP_PROXY: http://InfraProxy:8080
+
+      - job: precommit
+        displayName: 'Pre-commit framework'
+        container: precommit
+        continueOnError: true
+        variables:
+          PRE_COMMIT_HOME: $(Pipeline.Workspace)/pre-commit-cache
+          CFG: $(homedir)/.pre-commit-config.yaml
+          SKIP: '' # https://pre-commit.com/#temporarily-disabling-hooks
+        steps:
+            # https://pre-commit.com/#azure-pipelines-example
+          - script: |
+              echo "##vso[task.setvariable variable=PY]$(python -VV)"
+              pre-commit install --install-hooks
+              # pre-commit install --hook-type commit-msg --install-hooks
+              pre-commit autoupdate
+              pre-commit run --all-files --color always --verbose -c $(CFG)
+          - task: CacheBeta@0
+            inputs:
+              key: $(Agent.JobName) | $(CFG) | "$(PY)"
+              path: $(PRE_COMMIT_HOME)
+
+      - job: rubocop
+        displayName: 'Ruby lint'
+        container: rubocop
+        continueOnError: true
+        steps:
+          - script: rubocop -d -P -S --enable-pending-cops
+
+  - stage: BUILD
+    dependsOn: LINT
+    variables:
+      - name: templates
+        value: config/templates
+      - name: schema
+        value: config/schema
+    jobs:
+      - job: prune
+        displayName: 'Prune docker'
+        steps:
+          - script: |
+              docker container prune -f
+              docker network prune -f
+
+      # job: yaml
+      # dependsOn: prune
+      # container: jinja2
+      # steps:
+      #   - script: |
+      #       jinja -d component.yaml $(templates)/airflow.j2  >config/airflow.yaml
+      #       jinja -d component.yaml $(templates)/cron.j2     >config/cron.daily
+      #       jinja -d component.yaml $(templates)/postgres.j2 >config/postgres.yaml
+      #       jinja -d component.yaml $(templates)/rabbitmq.j2 >config/rabbitmq.yaml
+      #   - task: CopyFiles@2
+      #     inputs:
+      #       sourceFolder: '$(Build.SourcesDirectory)/config'
+      #       contents: '*.yaml'
+      #       targetFolder: '$(workdir)'
+
+      # job: schema
+      # displayName: 'Schema Validation'
+      # dependsOn: yaml
+      # steps:
+      #   - script: |
+      #       for name in airflow postgres rabbitmq
+      #       do
+      #           echo "check ${name}"
+      #           cue vet $(workdir)/${name}.yaml $(schema)/${name}.cue
+      #       done
+      # container: cuelang
+
+  # stage: TEST
+  # dependsOn: BUILD
+  # variables:
+  #   BUNDLE_CACHE_PATH: $(Pipeline.Workspace)/.cache/bundler
+  #   BUNDLE_WITHOUT: 'production'
+  # jobs:
+  #   - job: test
+  #     container: dindruby
+  #     strategy:
+  #       # https://docs.microsoft.com/azure/devops/pipelines/ecosystems
+  #       matrix:
+  #         default-ubuntu-1804-master-py3:
+  #           containerImage: ubuntu-2004-master-py3
+  #         default-centos-7-master-py3:
+  #           containerImage: centos-7-master-py3
+  #     steps:
+  #       - task: CacheBeta@0
+  #         inputs:
+  #           key: $(Agent.JobName) | "$(PY)"
+  #           path: $(BUNDLE_CACHE_PATH)
+  #       - script: |
+  #           bundle config set path $(BUNDLE_CACHE_PATH) \
+  #           && bundle config set without $(BUNDLE_WITHOUT) \
+  #           && bundle install --jobs=2 --path $(BUNDLE_CACHE_PATH) \
+  #           && bin/kitchen verify $(Agent.JobName)
+
+  - stage: RELEASE
+    jobs:
+      - job: semanticrelease
+        container: semanticrelease
+        condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+        steps:
+          - script: |
+              npx -p semantic-release -p @semantic-release/git -p semantic-release-ado semantic-release || true
+            displayName: 'Semantic release'
+
+          - script: echo $(nextRelease)
+            displayName: 'Show next version'
+
+          # powershell: |
+          #   echo "##vso[task.setvariable variable=versionNumber;isOutput=true]$(nextRelease)"
+          # name: setOutputVar
