@@ -1,7 +1,9 @@
 # Introduction
-Apache-Airflow idempotent Install and Upgrade on participating hosts and users.
+Apache-Airflow idempotent Install and Upgrade on participating hosts and users, using open source iac from saltstack-formulas.
 
-## Reference Deployment Architecture example
+## Reference Deployment Architecture
+
+The installing process targets this federated deployment architecture:
 
     host: primary.controller.net     user: controller\airflowservice  - Active Scheduler, UI, worker
     host: secondary.controller.net   user: controller\airflowservice  - Standby Scheduler, UI, worker
@@ -26,6 +28,8 @@ Apache-Airflow idempotent Install and Upgrade on participating hosts and users.
     host: worker02.fog.net           user: airflowservice
 
 # PREPARE
+
+Commission your infrastructure - Refer to INFRA document in this repo.
 
 Review Customer configuration in https:/github.com/noelmcloughlin/airflow-component/blob/master/sitedata.j2
 
@@ -95,12 +99,13 @@ On primary or secondary host, import your airflow variables:
 
 - http://primary.controller.net:15672    (user/pass: airflow/<redacted>)
 - http://secondary.controller.net:15672  (user/pass: airflow/<redacted>)
-- http://<worker-ipaddr>:15672           (user/pass: airflow/<redacted>)
+- http://[worker-ipaddr]:15672           (user/pass: airflow/<redacted>)
 
 ### Celery Flower UI
 
 - http://primary.controller.net:5555
 - http://secondary.controller.net:5555
+- http://[worker-ipaddr]:5555           (user/pass: airflow/<redacted>)
 
 
 # TROUBLESHOOTING
