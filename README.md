@@ -1,6 +1,8 @@
 # Introduction
 Apache-Airflow idempotent Install and Upgrade on participating hosts and users.
 
+## Reference Deployment Architecture example
+
     host: primary.controller.net     user: controller\airflowservice  - Active Scheduler, UI, worker
     host: secondary.controller.net   user: controller\airflowservice  - Standby Scheduler, UI, worker
 
@@ -18,10 +20,10 @@ Apache-Airflow idempotent Install and Upgrade on participating hosts and users.
     host: worker01.oranges.net       user: oranges\airflowservice
     host: worker02.oranges.net       user: oranges\airflowservice
 
-    host: worker01.edge.net      user: edge\airflowservice
-    host: worker02.edge.net      user: edge\airflowservice
-    host: worker01.fog.net       user: airflowservice
-    host: worker02.fog.net       user: airflowservice
+    host: worker01.edge.net          user: edge\airflowservice
+    host: worker02.edge.net          user: edge\airflowservice
+    host: worker01.fog.net           user: airflowservice
+    host: worker02.fog.net           user: airflowservice
 
 # PREPARE
 
@@ -36,7 +38,7 @@ Logon as airflowservice on each participating host and user, and ensure proxy is
     export no_proxy="localhost,*.net"
     export PATH=${PATH}:/usr/local/bin
 
-Plan to deploy primary/secondary hosts before workers. The active controller supports workers.
+Plan to deploy primary/secondary hosts before workers start trying to contact controllers.
 
 Optionally wipe data on any-all servers before reinstall. If unsure, skip this command:
 
@@ -144,7 +146,7 @@ View log file using 'vi'. Type `/Result: False` to goto failures in the ~/iac-in
 
 ### Install stuck on same step for long time
 
-Reboot and try again. Sometimes on CentOS7 an software upgrade pulls in a new kernel version and needs immediate reboot.
+Reboot and try again. Sometimes on CentOS7 an software upgrade pulls in a new kernel version needing reboot.
 
 #### Permissions on CentOS7
 
@@ -247,10 +249,16 @@ Fix issues (updating webserver_config.py file) and try again (start Airflow UI [
 
 # SUPPORT CHANNELS
 
-For IaC Installer support raise issue at https://github.com/saltstack-formulas/salter/issues and ping @noelmcloughlin.  Feel free to fall back to the official airflow documentation: https://airflow.apache.org/docs/apache-airflow/stable/installation.html
+For IaC Installer support raise issue at https://github.com/saltstack-formulas/salter/issues and ping @noelmcloughlin. Fall back to the official airflow documentation if necessary: https://airflow.apache.org/docs/apache-airflow/stable/installation.html
 
 ## References
 
+### IaC Installer
+- https://github.com/noelmcloughlin/airflow-component (i.e. this repo)
+- https://github.com/saltstack-formulas/airflow-formula
+- https://github.com/saltstack-formulas/salter
+
+### Airflow
 - https://www.cloudwalker.io/2019/09/09/airflow-using-rabbitmq-and-celery
 - https://corecompete.com/scaling-out-airflow-with-celery-and-rabbitmq-to-orchestrate-etl-jobs-on-the-cloud
 - https://victor.4devs.io/en/queue-servers/rabbitmq-federation-plugin.html
