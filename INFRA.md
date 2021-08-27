@@ -1,30 +1,32 @@
 # PROJECT PLAN: FEDERATED SCALABLE APACHE AIRFLOW
 
-This is a guide for DevOps, SRE, and Data Engineer planning a scalable federated Apache-Airflow implemenation project.
+DevOps, SRE, and Data Engineers need to design a scalable Apache-Airflow deployment to support multi-tenancy. The compute implemenation architecture can be unclear. This guide explains what series of "jira" tickets are needed for a federated airflow deployment.
 
-Here is the Reference Deployment Architecture used to illustrate what tickets need to be raised for infra.
+Note: It is based on real deployemnt supported by https://github.com/noelmcloughlin/airflow-component
 
-    host: primary.controller.net     user: controller\airflowservice  - Active Scheduler, UI, worker
-    host: secondary.controller.net   user: controller\airflowservice  - Standby Scheduler, UI, worker
+Here is the federated multi-tenant reference architecture used in this document:
 
-    host: worker01.applesdev.net     user: applesdev\airflowservice
-    host: worker02.applesdev.net     user: applesdev\airflowservice
-    host: worker01.applestest.net    user: applestest\airflowservice
-    host: worker02.applestest.net    user: applestest\airflowservice
-    host: worker01.apples.net        user: apples\airflowservice
-    host: worker02.apples.net        user: apples\airflowservice
+    primary:   controller01.controller.net  user: controller\airflowservice  - Active Scheduler, UI, worker
+    secondary: controller02.controller.net  user: controller\airflowservice  - Standby Scheduler, UI, worker
 
-    host: worker01.orangesdev.net    user: orangesdev\airflowservice
-    host: worker02.orangesdev.net    user: orangesdev\airflowservice
-    host: worker01.orangestest.net   user: orangestest\airflowservice
-    host: worker02.orangestest.net   user: orangestest\airflowservice
-    host: worker01.oranges.net       user: oranges\airflowservice
-    host: worker02.oranges.net       user: oranges\airflowservice
+    worker: worker01.apples.net        user: apples\airflowservice
+    worker: worker02.apples.net        user: apples\airflowservice
+    worker: worker01.applestest.net    user: applestest\airflowservice
+    worker: worker02.applestest.net    user: applestest\airflowservice
+    worker: worker01.applesdev.net     user: applesdev\airflowservice
+    worker: worker02.applesdev.net     user: applesdev\airflowservice
 
-    host: worker01.edge.net          user: edge\airflowservice
-    host: worker02.edge.net          user: edge\airflowservice
-    host: worker01.fog.net           user: airflowservice
-    host: worker02.fog.net           user: airflowservice
+    worker: worker01.oranges.net       user: oranges\airflowservice
+    worker: worker02.oranges.net       user: oranges\airflowservice
+    worker: worker01.orangestest.net   user: orangestest\airflowservice
+    worker: worker02.orangestest.net   user: orangestest\airflowservice
+    worker: worker01.orangesdev.net    user: orangesdev\airflowservice
+    worker: worker02.orangesdev.net    user: orangesdev\airflowservice
+
+    worker: worker01.edge.net          user: edge\airflowservice
+    worker: worker02.edge.net          user: edge\airflowservice
+    worker: worker01.fog.net           user: airflowservice
+    worker: worker02.fog.net           user: airflowservice
 
 # TICKET SLOGANS
 

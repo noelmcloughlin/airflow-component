@@ -1,9 +1,10 @@
 # Introduction
-Apache-Airflow idempotent Install and Upgrade on participating hosts and users, using open source IaC installer.
+
+Federated Apache-Airflow idempotent Install and Upgrade solution
 
 ## Reference Deployment Architecture
 
-The installing process targets this federated deployment architecture:
+The supported reference solution architecture is highly scalable:
 
     primary:   controller01.controller.net   user: controller\airflowservice  - Active Scheduler, UI, worker
     secondary: controller02.controller.net   user: controller\airflowservice  - Standby Scheduler, UI, worker
@@ -31,9 +32,9 @@ The installing process targets this federated deployment architecture:
 
 Commission your infrastructure - Refer to INFRA document in this repository.
 
-Review Customer configuration in https:/github.com/noelmcloughlin/airflow-component/blob/master/sitedata.j2
+Review Customer configuration in [https:/github.com/noelmcloughlin/airflow-component/blob/master/sitedata.j2](https://github.com/noelmcloughlin/airflow-component/blob/master/sitedata.j2)
 
-Logon as airflowservice on each participating host and user, and ensure proxy is setup (in ~/.bashrc):
+Logon as airflowservice on each participating host and user, and ensure proxy is published (in ~/.bashrc).
 
     export HTTP_PROXY="http://myproxy:8080"
     export HTTPS_PROXY="http://myproxy:8080"
