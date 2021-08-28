@@ -10,6 +10,18 @@
 {% set secondaryhost   = 'controller02' %}
 {% set webserversecret = '123456789101112131415' %}
 
+###########################
+# if using ldap, set false
+###########################
+{% set create_user_group = true %}
+
+################################################
+# The installer needs domainname value. If host
+# has none, then we detect 'none' (hostname -d)
+################################################
+{# set domain = grains.host.split('-')[0] #}
+{% set domain = salt['cmd.run']("hostname -d") %}
+
 ######################
 ### IN SCOPE DOMAINS
 ######################

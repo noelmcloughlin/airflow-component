@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 # vim: ft=yaml
 ---
-{% set domain = grains.host.split('-')[0] %}
 {% import './sitedata.j2' as my %}
+{% set domain = my['domain'] %}
 
 # https://github.com/saltstack-formulas/hostsfile-formula/blob/master/pillar.example
 hostsfile:
@@ -35,7 +35,7 @@ airflow:
     airflow:
       user: {{ my[domain]['user']|string }}
       group: {{ my[domain]['group']|string }}
-      skip_user_state: true  # ldap user already exists
+      create_user_group: {{ my['create_user_group']|string }}
               {%- if grains.host == my.primaryhost|string %}
       role: localdb    # once DBAs take over PostgresDB deleteme.
               {%- endif %}

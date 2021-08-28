@@ -1,4 +1,5 @@
 # FEDERATED APACHE AIRFLOW INFRA PLAN
+https://github.com/noelmcloughlin/airflow-component
 
 To assist sprint planning, this document is an exhaustive list of "ticket slogans" which to be refined as tasks for your infra team to be consumed by [airflow-component installer](https://github.com/noelmcloughlin/airflow-component#readme) or another installer, based on [Official airflow docs](https://airflow.apache.org/docs/apache-airflow/stable/installation.html):
 
@@ -50,16 +51,16 @@ Request compute for apache-airflow controllers and workers. OS must be GNU/Linux
 
 9. [fog] Commision two [workertype] compute hosts
 
-## WebProxy 
+## WebProxy
 
 Request these entries be added to proxy for airflow-component Installer:
 
-    *.apache.org:443 
-    *.bootstrap.pypa.io:44 
-    *.postgresql.org:443 
-    *.saltstack.com:443 
-    *.fedoraproject.org:443 
-    *.github.com:443 
+    *.apache.org:443
+    *.bootstrap.pypa.io:443
+    *.postgresql.org:443
+    *.saltstack.com:443
+    *.fedoraproject.org:443
+    *.github.com:443
     *.githubusercontent.com:443
     *.fedora.is:443
     *.cloudsmith.io:443
@@ -113,7 +114,7 @@ Request access to airflow database from workers.
 7. [edge] open access to remote postgres port 5432
 
 8. [fog] open access to remote postgres port 5432
-    
+
 ## airflow worker logs
 
 Request access to worker task log files from controllers:
@@ -133,46 +134,6 @@ Request access to worker task log files from controllers:
 7. [edge] allow controllers to access worker port 8793 [airflow]
 
 8. [fog] allow controllers to access worker port 8793 [airflow]
-    
-## git repo acccess (optional)
-
-Allow synchronization of our git repo to controllers and workers (fog workers have no network connectivity).
-
-1. [controller] allow git clone access to our repo
-
-2. [applesdev] allow git clone access to our repo
-
-3. [orangesdev] allow git clone access to our repo
-
-4. [applestest] allow git clone access to our repo
-
-5. [orangestest] allow git clone access to our repo
-
-6. [apples] allow git clone access to our repo
-
-7. [oranges] allow git clone access to our repo
-
-8. [edge] allow git clone access to our repo
-
-## Airflow Service Accounts
-
-The installer works with native POSIX Linux users. This ticket requests a "Service Account" if cloud access is needed:
-
-1. [controller] create [airflow] airflowservice account
-
-2. [applesdev] create [airflow] airflowservice account
-
-3. [applestest] create [airflow] airflowservice account
-
-4. [apples] create [airflow] airflowservice account
-
-5. [orangesdev] create [airflow] airflowservice account
-
-6. [orangestest] create [airflow] airflowservice account
-
-7. [oranges] create [airflow] airflowservice account
-
-8. [edge] create [airflow] airflowservice account
 
 ## RabbitMQ port
 
@@ -193,30 +154,70 @@ Workers must be able to communicated with RabbitMQ on the controller domain per 
 7. [edge] open access to [federated rabbitmq] port 5672
 
 8. [fog] open access to [federated rabbitmq] port 5672
-    
+
 
 ## RabbitMQ Clustering ports
 
 This ticket allows PAIRS (controller01/02, worker01/02) to form cluster pairs (a<->b) over standard ports. We will create multiple independent rabbitmq two-node clusters for contoller, applesdev, applestest, apples, orangesdev, orangestest, oranges, edge, fog domains:
 
-1. [controller] allow controller pairs (01/02) to cluster on ports 25672,4369
+1. [controller] allow controller01/02 to form cluster on ports 25672,4369
 
-2. [applesdev] allow worker pairs (01/02) to cluster on ports 25672,4369
+2. [applesdev] allow worker01/02 to form cluster on ports 25672,4369
 
-3. [orangesdev] allow worker pairs (01/02) to cluster on ports 25672,4369
+3. [orangesdev] allow worker01/02 to form cluster on ports 25672,4369
 
-4. [applestest] allow worker pairs (01/02) to cluster on ports 25672,4369
+4. [applestest] allow worker01/02 to form cluster on ports 25672,4369
 
-5. [orangestest] allow worker pairs (01/02) to cluster on ports 25672,4369
+5. [orangestest] allow worker01/02 to form cluster on ports 25672,4369
 
-6. [apples] allow worker pairs (01/02) to cluster on ports 25672,4369
+6. [apples] allow worker01/02 to form cluster on ports 25672,4369
 
-7. [oranges] allow worker pairs (01/02) to cluster on ports 25672,4369
+7. [oranges] allow worker01/02 to form cluster on ports 25672,4369
 
-8. [edge] allow worker pairs (01/02) to cluster on ports 25672,4369
+8. [edge] allow worker01/02 to form cluster on ports 25672,4369
 
-9. [fog] allow worker pairs to cluster on ports 25672,4369
+9. [fog] allow worker01/02 to form cluster on ports 25672,4369
 
+
+## git repo acccess (optional)
+
+Allow synchronization of our git repo to controllers and workers (fog workers have no network connectivity).
+
+1. [controller] allow git clone access to our repo
+
+2. [applesdev] allow git clone access to our repo
+
+3. [orangesdev] allow git clone access to our repo
+
+4. [applestest] allow git clone access to our repo
+
+5. [orangestest] allow git clone access to our repo
+
+6. [apples] allow git clone access to our repo
+
+7. [oranges] allow git clone access to our repo
+
+8. [edge] allow git clone access to our repo
+
+## Airflow Service Accounts (optional)
+
+The installer works with POSIX Linux users. Maybe you need something else (i.e. "Service Accounts" for cloud resources):
+
+1. [controller] create [airflow] airflowservice account
+
+2. [applesdev] create [airflow] airflowservice account
+
+3. [applestest] create [airflow] airflowservice account
+
+4. [apples] create [airflow] airflowservice account
+
+5. [orangesdev] create [airflow] airflowservice account
+
+6. [orangestest] create [airflow] airflowservice account
+
+7. [oranges] create [airflow] airflowservice account
+
+8. [edge] create [airflow] airflowservice account
 
 # References
 
