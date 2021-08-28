@@ -1,8 +1,8 @@
-Lightweight Federated Apache-Airflow idempotent Install and Upgrade solution
+Lightweight Federated Apache-Airflow idempotent Install and Upgrade
 
 # Reference Deployment Architecture
 
-The airflow-component solution is a very standardized reference deployment architecture for apache airflow, designed to accelerate deployment of a federated, multi-tenant implemenation using Configuration as Code.
+The airflow-component installer solution is a reference deployment architecture for apache airflow, designed to accelerate deployment of a federated, multi-tenant implemenation using Configuration as Code.
 
 ![Airflow-Component](/templates/img/airflow-component.png?raw=true "Federated Airflow, Reference Deployment Architecture")
 
