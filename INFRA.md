@@ -1,8 +1,8 @@
-# AIRFLOW INFRA PLANNING
+# FEDERATED APACHE AIRFLOW INFRA PLAN
 
-The implementation architecture for multi-tenant, federated, repeatable deployments of Apache Airflow requires "compute-networking" design. To assist sprint planning, this document is an exhaustive list of "ticket slogans" which to be refined as tasks for your infra team to be consumed by [airflow-component installer](https://github.com/noelmcloughlin/airflow-component#readme) or another installer, based on [Official airflow docs](https://airflow.apache.org/docs/apache-airflow/stable/installation.html):
+To assist sprint planning, this document is an exhaustive list of "ticket slogans" which to be refined as tasks for your infra team to be consumed by [airflow-component installer](https://github.com/noelmcloughlin/airflow-component#readme) or another installer, based on [Official airflow docs](https://airflow.apache.org/docs/apache-airflow/stable/installation.html):
 
-![Airflow-Component](/img/airflow-component.png?raw=true "Federated Airflow, Reference Deployment Architecture")
+![Airflow-Component](/templates/img/airflow-component.png?raw=true "Federated Airflow, Reference Deployment Architecture")
 
     primary:   controller01.controller.net  user: controller\airflowservice  - Active Scheduler, UI, worker
     secondary: controller02.controller.net  user: controller\airflowservice  - Standby Scheduler, UI, worker
@@ -30,29 +30,29 @@ The implementation architecture for multi-tenant, federated, repeatable deployme
 
 ## Server requests
 
-This ticket is required to host apache-airflow controllers and workers federated architecture. OS must be Linux.
+Request compute for apache-airflow controllers and workers. OS must be GNU/Linux (RedHat, Ubuntu):
 
-1. [controller][controllertype] Commission two compute hosts
+1. [controller] Commission two [controllertype] compute hosts
 
-2. [applesdev][workertype] Commission two compute hosts
+2. [applesdev] Commision two [workertype] compute hosts
 
-3. [orangesdev][workertype] Commission two compute hosts
+3. [orangesdev] Commision two [workertype] compute hosts
 
-4. [applestest][workertype] Commission two compute hosts
+4. [applestest] Commision two [workertype] compute hosts
 
-5. [orangestest][workertype] Commission two compute hosts
+5. [orangestest] Commision two [workertype] compute hosts
 
-6. [apples][workertype] Commission two compute hosts
+6. [apples] Commision two [workertype] compute hosts
 
-7. [oranges][workertype] Commission two compute hosts
+7. [oranges] Commision two [workertype] compute hosts
 
-8. [edge][workertype] Commission two compute hosts
+8. [edge] Commision two [workertype] compute hosts
 
-9. [fog][workertype] Commission two compute hosts
+9. [fog] Commision two [workertype] compute hosts
 
 ## WebProxy 
 
-We will install apache-airflow on all servers using "Salter" Infra as Code (IaC) installer and these endpoints:
+Request these entries be added to proxy for airflow-component Installer:
 
     *.apache.org:443 
     *.bootstrap.pypa.io:44 
@@ -69,155 +69,153 @@ We will install apache-airflow on all servers using "Salter" Infra as Code (IaC)
     *.cloudfront.net:443
 
     *.ftp.fi.muni.cz:443
-    *. mirrors.up.pt:443
-    *. mirrors.nxthost.com:443
-    *. fedora.cu.be:443
-    *. epel.mirror.omnilance.com:443
-    *. mirror.netzwerge.de:443
+    *.mirrors.up.pt:443
+    *.mirrors.nxthost.com:443
+    *.fedora.cu.be:443
+    *.epel.mirror.omnilance.com:443
+    *.mirror.netzwerge.de:443
 
-This ticket requests internet access for "Salter" IaC Installer, to install Airflow stack (postgres, rabbitmq, airflow)
+1. [controller] update proxy with [installer] mirrors
 
-1. [controller][iac] update proxy with these wildcard hosts
+2. [applesdev] update proxy with [installer] mirrors
 
-2. [applesdev][iac] update proxy with these wildcard hosts
+3. [orangesdev] update proxy with [installer] mirrors
 
-3. [orangesdev][iac] update proxy with these wildcard hosts
+4. [applestest] update proxy with [installer] mirrors
 
-4. [applestest][iac] update proxy with these wildcard hosts
+5. [orangestest] update proxy with [installer] mirrors
 
-5. [orangestest][iac] update proxy with these wildcard hosts
+6. [apples] update proxy with [installer] mirrors
 
-6. [apples][iac] update proxy with these wildcard hosts
+7. [oranges] update proxy with [installer] mirrors
 
-7. [oranges][iac] update proxy with these wildcard hosts
+8. [edge] update proxy with [installer] mirrors
 
-8. [edge][iac] update proxy with these wildcard hosts
-
-9. [fog][iac] update proxy with these wildcard hosts
+9. [fog] update proxy with [installer] mirrors
 
 
 ## Airflow Database
 
-This ticket gives the workers access airflow database:
+Request access to airflow database from workers.
 
-1. [applesdev][airflow] open access to postgres port 5432
+1. [applesdev] open access to remote postgres port 5432
 
-2. [orangesdev][airflow] open access to postgres port 5432
+2. [orangesdev] open access to remote postgres port 5432
 
-3. [applestest][airflow] open access to postgres port 5432
+3. [applestest] open access to remote postgres port 5432
 
-4. [orangestest][airflow] open access to postgres port 5432
+4. [orangestest] open access to remote postgres port 5432
 
-5. [apples][airflow] open access to postgres port 5432
+5. [apples] open access to remote postgres port 5432
 
-6. [oranges][airflow] open access to postgres port 5432
+6. [oranges] open access to remote postgres port 5432
 
-7. [edge][airflow] open access to postgres port 5432
+7. [edge] open access to remote postgres port 5432
 
-8. [fog][airflow] open access to postgres port 5432
+8. [fog] open access to remote postgres port 5432
     
 ## airflow worker logs
 
-This ticket allows Airflow UI to retrieve and display worker task log files centrally:
+Request access to worker task log files from controllers:
 
-1. [applesdev][airflow] allow controllers to http get port 8793
+1. [applesdev] allow controllers to access worker port 8793 [airflow]
 
-2. [orangesdev][airflow] allow controllers to http get port 8793
+2. [orangesdev] allow controllers to access worker port 8793 [airflow]
 
-3. [applestest][airflow] allow controllers to http get port 8793
+3. [applestest] allow controllers to access worker port 8793 [airflow]
 
-4. [orangestest][airflow] allow controllers to http get port 8793
+4. [orangestest] allow controllers to access worker port 8793 [airflow]
 
-5. [apples][airflow] allow controllers to http get port 8793
+5. [apples] allow controllers to access worker port 8793 [airflow]
 
-6. [oranges][airflow] allow controllers to http get port 8793
+6. [oranges] allow controllers to access worker port 8793 [airflow]
 
-7. [edge][airflow] allow controllers to http get port 8793
+7. [edge] allow controllers to access worker port 8793 [airflow]
 
-8. [fog][airflow] allow controllers to http get port 8793
+8. [fog] allow controllers to access worker port 8793 [airflow]
     
 ## git repo acccess (optional)
 
-This ticket allows Airflow hosts to retrieve software from git repository which has network connectivity (not fog.net), but needs explicit access:
+Allow synchronization of our git repo to controllers and workers (fog workers have no network connectivity).
 
-1. [controller][iac] allow git clone access to our repo
+1. [controller] allow git clone access to our repo
 
-2. [applesdev][iac] allow git clone access to our repo
+2. [applesdev] allow git clone access to our repo
 
-3. [orangesdev][iac] allow git clone access to our repo
+3. [orangesdev] allow git clone access to our repo
 
-4. [applestest][iac] allow git clone access to our repo
+4. [applestest] allow git clone access to our repo
 
-5. [orangestest][iac] allow git clone access to our repo
+5. [orangestest] allow git clone access to our repo
 
-6. [apples][iac] allow git clone access to our repo
+6. [apples] allow git clone access to our repo
 
-7. [oranges][iac] allow git clone access to our repo
+7. [oranges] allow git clone access to our repo
 
-8. [edge][iac]  allow git clone access to our repo
+8. [edge] allow git clone access to our repo
 
 ## Airflow Service Accounts
 
 The installer works with native POSIX Linux users. This ticket requests a "Service Account" if cloud access is needed:
 
-1. [controller][airflow] create airflowservice account
+1. [controller] create [airflow] airflowservice account
 
-2. [applesdev][airflow] create airflowservice account
+2. [applesdev] create [airflow] airflowservice account
 
-3. [applestest][airflow] create airflowservice account
+3. [applestest] create [airflow] airflowservice account
 
-4. [apples][airflow] create airflowservice account
+4. [apples] create [airflow] airflowservice account
 
-5. [orangesdev][airflow] create airflowservice account
+5. [orangesdev] create [airflow] airflowservice account
 
-6. [orangestest][airflow] create airflowservice account
+6. [orangestest] create [airflow] airflowservice account
 
-7. [oranges][airflow] create airflowservice account
+7. [oranges] create [airflow] airflowservice account
 
-8. [edge][airflow] create airflowservice account
+8. [edge] create [airflow] airflowservice account
 
 ## RabbitMQ port
 
 Workers must be able to communicated with RabbitMQ on the controller domain per this ticket.
 
-1. [applesdev][airflow] open access to federated rabbitmq port 5672
+1. [applesdev] open access to [federated rabbitmq] port 5672
 
-2. [orangesdev][airflow] open access to federated rabbitmq port 5672
+2. [orangesdev] open access to [federated rabbitmq] port 5672
 
-3. [applestest][airflow] open access to federated rabbitmq port 5672
+3. [applestest] open access to [federated rabbitmq] port 5672
 
-4. [orangestest][airflow] open access to federated rabbitmq port 5672
+4. [orangestest] open access to [federated rabbitmq] port 5672
 
-5. [apples][airflow] open access to federated rabbitmq port 5672
+5. [apples] open access to [federated rabbitmq] port 5672
 
-6. [oranges][airflow] open access to federated rabbitmq port 5672
+6. [oranges] open access to [federated rabbitmq] port 5672
 
-7. [edge][airflow] open access to federated rabbitmq port 5672
+7. [edge] open access to [federated rabbitmq] port 5672
 
-8. [fog][airflow] open access to federated rabbitmq port 5672
+8. [fog] open access to [federated rabbitmq] port 5672
     
 
 ## RabbitMQ Clustering ports
 
 This ticket allows PAIRS (controller01/02, worker01/02) to form cluster pairs (a<->b) over standard ports. We will create multiple independent rabbitmq two-node clusters for contoller, applesdev, applestest, apples, orangesdev, orangestest, oranges, edge, fog domains:
 
-1. [controller][airflow] allow controller pairs (01/02) to cluster on ports 25672,4369
+1. [controller] allow controller pairs (01/02) to cluster on ports 25672,4369
 
-2. [applesdev][airflow] allow worker pairs (01/02) to cluster on ports 25672,4369
+2. [applesdev] allow worker pairs (01/02) to cluster on ports 25672,4369
 
-3. [orangesdev][airflow] allow worker pairs (01/02) to cluster on ports 25672,4369
+3. [orangesdev] allow worker pairs (01/02) to cluster on ports 25672,4369
 
-4. [applestest][airflow] allow worker pairs (01/02) to cluster on ports 25672,4369
+4. [applestest] allow worker pairs (01/02) to cluster on ports 25672,4369
 
-5. [orangestest][airflow] allow worker pairs (01/02) to cluster on ports 25672,4369
+5. [orangestest] allow worker pairs (01/02) to cluster on ports 25672,4369
 
-6. [apples][airflow] allow worker pairs (01/02) to cluster on ports 25672,4369
+6. [apples] allow worker pairs (01/02) to cluster on ports 25672,4369
 
-7. [oranges][airflow] allow worker pairs (01/02) to cluster on ports 25672,4369
+7. [oranges] allow worker pairs (01/02) to cluster on ports 25672,4369
 
-8. [edge][airflow] allow worker pairs (01/02) to cluster on ports 25672,4369
+8. [edge] allow worker pairs (01/02) to cluster on ports 25672,4369
 
-9. [fog][airflow] allow worker pairs to cluster on ports 25672,4369
+9. [fog] allow worker pairs to cluster on ports 25672,4369
 
 
 # References
