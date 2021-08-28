@@ -1,6 +1,6 @@
 # Lightweight federated Apache-Airflow Installer
 
-The airflow-component solution is designed to achieve a federated reference deployment architecture for apache airflow, using Configuration as Code, or a single-host deployment if declared.
+This airflow-component solution is designed to provision a federated implementation architecture for apache airflow, using Configuration as Code, or a single-host deployment if you prefer.
 
 ![Airflow-Component](/templates/img/airflow-component.png?raw=true "Federated Airflow, Reference Deployment Architecture")
 
@@ -26,6 +26,10 @@ The airflow-component solution is designed to achieve a federated reference depl
     worker: worker01.fog.net           user: airflowservice
     worker: worker02.fog.net           user: airflowservice
 
+
+# TL'DR
+
+    ~/airflow-component/installer.sh | tee ~/iac-installer.log
 
 # PREPARE
 

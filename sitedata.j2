@@ -18,26 +18,25 @@
 ############################################
 # Determine what domainname to match below
 ############################################
-{% set domain = salt['cmd.run']("hostname -d | cut -d. -f1") %}
+{% set domain = salt['cmd.run']('hostname -d').split('.')[0]|lower|replace('none','localdomain') %}
 
-######################
+#####################
 ### IN SCOPE DOMAINS
-######################
-{% set names = ['none', 'controller', 'apples', 'oranges', 'applestest', 'orangestest'] %}
-{% set names = names + ['applesdev', 'orangesdev', 'edge', 'fog', 'future1', 'future2'] %}
+#####################
+{% set names = ['localdomain', 'controller', 'apples', 'oranges', 'applestest'] %}
+{% set names = names + ['orangestest', 'applesdev', 'orangesdev', 'edge', 'fog'] %}
 
-{% set none = {} %}
-{% do none.update({ 'fqdn':       '',
-                    'auth_type':  'AUTH_DB',
-                    'user':       'airflow',
-                    'group':      'airflow',
-                    'name':       'controller',
-                    'workers':    {'controller01': '10.0.0.1', 'controller02': '10.0.0.2'},
-                    'ldapserver': '',
-                    'database':   '',
-                    'ldapfilter': '',
-                    'ldapbase':   ''}) %}
-
+{% set localdomain = {} %}
+{% do localdomain.update({ 'fqdn':       '',
+                           'auth_type':  'AUTH_DB',
+                           'user':       'airflow',
+                           'group':      'airflow',
+                           'name':       'controller',
+                           'workers':    {'controller01': '10.0.0.1', 'controller02': '10.0.0.2'},
+                           'ldapserver': '',
+                           'database':   '',
+                           'ldapfilter': '',
+                           'ldapbase':   ''}) %}
 
 {% set controller = {} %}
 {% do controller.update({ 'fqdn':       'CONTROLLER.NET',
@@ -45,7 +44,7 @@
                           'user':       'airflowservice@CONTROLLER.NET',
                           'group':      'groupairflow@CONTROLLER.NET',
                           'name':       'controller',
-                          'workers':    {'controller01': '10.0.0.1', 'controller02': '10.0.0.2'},
+                          'workers':    {'controller01': '10.0.1.1', 'controller02': '10.0.1.2'},
                           'ldapserver': 'controller-dc1.CONTROLLER.NET',
                           'database':   'airflow:airflow@controller01/airflow',
                           'ldapfilter': '(&(objectClass=user)(sAMAccountName=*)(|(memberOf=CN=grpRole_dataeng,OU=ouEngineers,DC=CONTROLLER,DC=NET)(memberOf=CN=grpRole_devops,OU=ouEngineers,DC=CONTROLLER,DC=NET))',
@@ -56,7 +55,7 @@
                       'user':       'airflowservice@APPLES.NET',
                       'group':      'groupairflow@APPLES.NET',
                       'name':       'apples',
-                      'workers':    {'worker01': '10.0.1.1', 'worker02': '10.0.1.2'},
+                      'workers':    {'worker01': '10.0.2.1', 'worker02': '10.0.2.2'},
                       'ldapserver': 'apples-dc1.apples.net',
                       'ldapfilter': '',
                       'database':   'airflow:airflow@controller01/airflow',
@@ -67,7 +66,7 @@
                        'user':       'airflowservice@ORANGES.NET',
                        'group':      'groupairflow@ORANGES.NET',
                        'name':       'oranges',
-                       'workers':    {'worker01': '10.0.2.1', 'worker02': '10.0.2.2'},
+                       'workers':    {'worker01': '10.0.3.1', 'worker02': '10.0.3.2'},
                        'ldapserver': 'oranges-dc1.oranges.net',
                        'ldapfilter': '',
                        'database':   'airflow:airflow@controller01/airflow',
@@ -78,7 +77,7 @@
                           'user':       'airflowservice@APPLESTEST.NET',
                           'group':      'groupairflow@APPLESTEST.NET',
                           'name':       'applestest',
-                          'workers':    {'worker01': '10.0.3.1', 'worker02': '10.0.3.2'},
+                          'workers':    {'worker01': '10.0.4.1', 'worker02': '10.0.4.2'},
                           'ldapserver': 'apples-dc1.applestest.net',
                           'ldapfilter': '',
                           'database':   'airflow:airflow@controller01/airflow',
@@ -89,7 +88,7 @@
                            'user':       'airflowservice@ORANGESTEST.NET',
                            'group':      'groupairflow@ORANGESTEST.NET',
                            'name':       'orangestest',
-                           'workers':    {'worker01': '10.0.4.1', 'worker02': '10.0.4.2'},
+                           'workers':    {'worker01': '10.0.5.1', 'worker02': '10.0.5.2'},
                            'ldapserver': 'oranges-dc1.orangestest.net',
                            'ldapfilter': '',
                            'database':   'airflow:airflow@controller01/airflow',
@@ -100,7 +99,7 @@
                          'user':       'airflowservice@APPLESDEV.NET',
                          'group':      'groupairflow@APPLESDEV.NET',
                          'name':       'applesdev',
-                         'workers':    {'worker01': '10.0.5.1', 'worker02': '10.0.5.2'},
+                         'workers':    {'worker01': '10.0.6.1', 'worker02': '10.0.6.2'},
                          'ldapserver': 'apples-dc1.applesdev.net',
                          'ldapfilter': '',
                          'database':   'airflow:airflow@controller01/airflow',
@@ -111,7 +110,7 @@
                           'user':       'airflowservice@ORANGESDEV.NET',
                           'group':      'groupairflow@ORANGESDEV.NET',
                           'name':       'orangesdev',
-                          'workers':    {'worker01': '10.0.6.1', 'worker02': '10.0.6.2'},
+                          'workers':    {'worker01': '10.0.7.1', 'worker02': '10.0.7.2'},
                           'ldapserver': 'oranges-dc1.orangesdev.net',
                           'ldapfilter': '',
                           'database':   'airflow:airflow@controller01/airflow',
@@ -122,7 +121,7 @@
                     'user':       'airflowservice@EDGE.NET',
                     'group':      'groupairflow@EDGE.NET',
                     'name':       'edge',
-                    'workers':    {'worker01': '10.0.7.1', 'worker02': '10.0.7.2'},
+                    'workers':    {'worker01': '10.0.8.1', 'worker02': '10.0.8.2'},
                     'ldapserver': 'edge-dc1.edge.net',
                     'ldapfilter': '',
                     'database':   'airflow:airflow@controller01/airflow',
@@ -133,7 +132,7 @@
                     'user':       'airflowservice',
                     'group':      'groupairflow@FOG.NET',
                     'name':       'fog',
-                    'workers':    {'worker01': '10.0.8.1', 'worker02': '10.0.8.2'},
+                    'workers':    {'worker01': '10.0.9.1', 'worker02': '10.0.9.2'},
                     'ldapserver': 'fog-dc1.fog.net',
                     'ldapfilter': '',
                     'database':   'airflow:airflow@controller01/airflow',

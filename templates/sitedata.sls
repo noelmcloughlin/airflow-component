@@ -36,9 +36,9 @@ airflow:
       user: {{ my[domain]['user']|string }}
       group: {{ my[domain]['group']|string }}
       create_user_group: {{ my['create_user_group']|string }}
-              {%- if grains.host == my.primaryhost|string %}
+        {%- if grains.host == my.primaryhost|string or domain == 'localdomain' %}
       role: localdb    # once DBAs take over PostgresDB deleteme.
-              {%- endif %}
+        {%- endif %}
   database:
     airflow:
       user: airflow
@@ -51,7 +51,7 @@ airflow:
         celery_kubernetes_executor: {}
         celery:
           # https://docs.celeryproject.org/en/v5.0.2/getting-started/brokers
-          broker_url: amqp://airflow:airflow@localhost:5672/airflow   # always localhost
+          broker_url: amqp://airflow:airflow@127.0.0.1:5672/airflow   # always 127.0.0.1
           # once DBA's take over PostgresDB, changeme
           result_backend: db+postgresql://{{ my[domain]['database']|string }}
         cli: {}
@@ -324,7 +324,9 @@ postgres:
     - ['host', 'all', 'all', '0.0.0.0/0', 'md5']
     - ['host', 'all', 'all', '::/0', 'md5']
     - ['host', 'all', 'all', '127.0.0.1/32', 'md5']
+    - ['host', 'all', 'all', '127.0.0.1/32', 'trust']
     - ['host', 'all', 'all', '::1/128', 'md5']
+    - ['host', 'all', 'all', '::1/128', 'trust']
     - ['local', 'replication', 'all', 'peer']
     - ['host', 'replication', 'all', '127.0.0.1/32', 'md5']
     - ['host', 'replication', 'all', '::1/128', 'md5']

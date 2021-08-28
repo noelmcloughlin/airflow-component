@@ -7,13 +7,15 @@ clear
 # For various reasons run installer.sh as nonroot and switch to sudo as needed
 [ "$(id -u)" == 0 ] && echo -e "\nSwitch to nonroot _airflow user, exiting\n" && exit 1
 
-echo -e "\nSetting www proxy\n"
-export HTTP_PROXY="http://myproxy:8080"
-export HTTPS_PROXY="http://myproxy:8080"
-export http_proxy="${HTTP_PROXY}"
-export https_proxy="${HTTPS_PROXY}"
-export no_proxy="localhost,*.net"
-export PATH=${PATH}:/usr/local/bin
+if [[ "${1}" == 'proxy' ]]; then
+    echo -e "\nSetting www proxy\n"
+    export HTTP_PROXY="http://myproxy:8080"
+    export HTTPS_PROXY="http://myproxy:8080"
+    export http_proxy="${HTTP_PROXY}"
+    export https_proxy="${HTTPS_PROXY}"
+    export no_proxy="localhost,*.net"
+    export PATH=${PATH}:/usr/local/bin
+fi
 
 echo -e "\nInstall Salter Open Source IAC installer per https://github.com/saltstack-formulas/salter README\n"
 CENTOS_VERSION7_HACK=$( rpm -E %{rhel} 2>/dev/null )  # centos7 technical debt
@@ -52,14 +54,19 @@ echo -e "\n Please wait patiently ... or come back later ... this takes circa 15
 sudo salt-call state.highstate --local
 sudo systemctl stop salt-master && sudo systemctl disable salt-master  # not needed
 
-echo -e "\nRefresh Dags ..."
-cd ~/dags && rm -fr * && cp -Rp ../airflow-dags/dags/* .; chmod +x $( find . -name *.py)
+if [[ -d ~/dags ]] && [[ -d ~/airflow-dags ]]; then
+    echo -e "\nRefresh Dags ..."
+    cd ~/dags && rm -fr * && cp -Rp ../airflow-dags/dags/* .
+    (( $? == 0 )) && chmod +x $( find . -name *.py)
+fi
 
-## ensure ntp is okay ##
-sudo timedatectl set-ntp on
-sudo systemctl enable ntpd
-sudo systemctl stop ntpd
-sudo ntpd -gq
-sudo systemctl start ntpd
+if [[ -x /usr/sbin/ntpd ]]; then
+    ## ensure ntp is okay ##
+    sudo timedatectl set-ntp on
+    sudo systemctl enable ntpd
+    sudo systemctl stop ntpd
+    sudo ntpd -gq
+    sudo systemctl start ntpd
+fi
 
 echo -e "\ndone\n"
