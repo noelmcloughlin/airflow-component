@@ -1,6 +1,6 @@
 # AIRFLOW INFRA PLANNING
 
-The implementation architecture for multi-tenant, federated, repeatable deployments of Apache Airflow requires "compute-networking" design. To assist sprint planning, this document is an exhaustive list of "ticket slogans" which to be refined as tasks for your infra team to be consumed by [airflow-component installer](https://github.com/noelmcloughlin/airflow-component#readme) or another installer, based on [Official airflow docs](https://airflow.apache.org/docs/apache-airflow/stable/installation.html):
+To assist sprint planning, this document is an exhaustive list of "ticket slogans" which to be refined as tasks for your infra team to be consumed by [airflow-component installer](https://github.com/noelmcloughlin/airflow-component#readme) or another installer, based on [Official airflow docs](https://airflow.apache.org/docs/apache-airflow/stable/installation.html):
 
 ![Airflow-Component](/img/airflow-component.png?raw=true "Federated Airflow, Reference Deployment Architecture")
 

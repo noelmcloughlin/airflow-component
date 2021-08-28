@@ -1,12 +1,10 @@
-# Introduction
-
-Federated Apache-Airflow idempotent Install and Upgrade solution
+Lightweight Federated Apache-Airflow idempotent Install and Upgrade solution
 
 # Reference Deployment Architecture
 
-The airflow-component solution is a very standardized reference deployment architecture for apache airflow, designed to encapsulate, abstract, and accelerate deployment of a federated, multi-tenant implemenation architecture using Configuration as Code. The reference architecture follows this pattern:
+The airflow-component solution is a very standardized reference deployment architecture for apache airflow, designed to accelerate deployment of a federated, multi-tenant implemenation using Configuration as Code.
 
-![Airflow-Component](/img/airflow-component.png?raw=true "Federated Airflow, Reference Deployment Architecture")
+![Airflow-Component](/templates/img/airflow-component.png?raw=true "Federated Airflow, Reference Deployment Architecture")
 
     primary:   controller01.controller.net   user: controller\airflowservice  - Active Scheduler, UI, worker
     secondary: controller02.controller.net   user: controller\airflowservice  - Standby Scheduler, UI, worker
