@@ -15,21 +15,33 @@
 ###########################
 {% set create_user_group = true %}
 
-################################################
-# The installer needs domainname value. If host
-# has none, then we detect 'none' (hostname -d)
-################################################
-{# set domain = grains.host.split('-')[0] #}
-{% set domain = salt['cmd.run']("hostname -d") %}
+############################################
+# Determine what domainname to match below
+############################################
+{% set domain = salt['cmd.run']("hostname -d | cut -d. -f1") %}
 
 ######################
 ### IN SCOPE DOMAINS
 ######################
-{% set names = ['controller', 'apples', 'oranges', 'applestest', 'orangestest', 'applesdev', 'orangesdev'] %}
-{% set names = names + ['edge', 'fog', 'future1', 'future2'] %}
+{% set names = ['none', 'controller', 'apples', 'oranges', 'applestest', 'orangestest'] %}
+{% set names = names + ['applesdev', 'orangesdev', 'edge', 'fog', 'future1', 'future2'] %}
+
+{% set none = {} %}
+{% do none.update({ 'fqdn':       '',
+                    'auth_type':  'AUTH_DB',
+                    'user':       'airflow',
+                    'group':      'airflow',
+                    'name':       'controller',
+                    'workers':    {'controller01': '10.0.0.1', 'controller02': '10.0.0.2'},
+                    'ldapserver': '',
+                    'database':   '',
+                    'ldapfilter': '',
+                    'ldapbase':   ''}) %}
+
 
 {% set controller = {} %}
 {% do controller.update({ 'fqdn':       'CONTROLLER.NET',
+                          'auth_type':  'AUTH_DB',
                           'user':       'airflowservice@CONTROLLER.NET',
                           'group':      'groupairflow@CONTROLLER.NET',
                           'name':       'controller',
