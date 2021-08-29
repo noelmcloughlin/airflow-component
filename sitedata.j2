@@ -4,7 +4,6 @@
 ## APACHE AIRFLOW 
 ###################
 {% set airflow_version = '2.1.3' %}
-{% set primarydomain   = 'controller' %}
 {% set loadbalancer    = 'controller01' %}
 {% set primaryhost     = 'controller01' %}
 {% set secondaryhost   = 'controller02' %}
@@ -15,10 +14,15 @@
 ###########################
 {% set create_user_group = true %}
 
-############################################
-# Determine what domainname to match below
-############################################
+#############
+# Domainname
+#############
+{% set primarydomain   = 'controller' %}
 {% set domain = salt['cmd.run']('hostname -d').split('.')[0]|lower|replace('none','localdomain') %}
+{%- if domain in ('localdomain',) %}
+    {%- set primarydomain = domain %}
+    {%- set primarhost = localhost %}
+{%- endif %}
 
 #####################
 ### IN SCOPE DOMAINS
