@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 # vim: ft=yaml
 ---
-{% import './sitedata.j2' as my %}
-{% set domain = my['domain'] %}
+{%- set tplroot = tpldir.split('/')[0] %}
+{%- import tplroot ~ "/sitedata.j2" as my %}
+{%- set domain = my['domain'] %}
 
 # https://github.com/saltstack-formulas/hostsfile-formula/blob/master/pillar.example
 hostsfile:
@@ -169,7 +170,7 @@ rabbitmq:
   erlang_cookie: {{ my[domain]['name']|string }}-shared-secret
   nodes:
     rabbit:
-      clustered: true
+      clustered: {{ 'false' if domain == 'localdomain' else 'true' }}
           {%- if grains.host == my.primaryhost|string %}
       join_node: rabbit@{{ my.secondaryhost|string }}
           {%- elif grains.host == my.secondaryhost|string %}
