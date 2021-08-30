@@ -22,8 +22,7 @@ CENTOS_VERSION7_HACK=$( rpm -E %{rhel} 2>/dev/null )  # centos7 technical debt
 (( $? == 0 )) && (( CENTOS_VERSION7_HACK == 7 )) && export SALT_VERSION='stable 3001'
 curl -LO https://raw.githubusercontent.com/saltstack-formulas/salter/master/go.sh && bash go.sh
 if (( $? > 0 ));then
-    echo -e "\nSee TROUBLESHOOTING section in README for known CentOS7 fixes"
-    echo -e "\nOtherwise problem issue: https://github.com/saltstack-formulas/salter/issues"
+    echo -e "\nReport issue: https://github.com/noelmcloughlin/airflow-component/issues"
     exit 11
 fi
 

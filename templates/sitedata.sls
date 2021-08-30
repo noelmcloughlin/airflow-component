@@ -7,7 +7,7 @@
 # https://github.com/saltstack-formulas/hostsfile-formula/blob/master/pillar.example
 hostsfile:
   only:
-        {%- for domainname in my.names %}
+        {%- for domainname in my.domains %}
             {%- if 'workers' in my[domainname] %}
                 {%- for k,v in my[domainname]['workers'].items() %}
     {{ v }}:
@@ -174,10 +174,10 @@ rabbitmq:
       join_node: rabbit@{{ my.secondaryhost|string }}
           {%- elif grains.host == my.secondaryhost|string %}
       join_node: rabbit@{{ my.primaryhost|string }}
-          {%- elif grains.host == my[domain]['name']|string + '-lms01' %}
-      join_node: rabbit@{{ my[domain]['name']|string }}-lms02
-          {%- elif grains.host == my[domain]['name']|string + '-lms02' %}
-      join_node: rabbit@{{ my[domain]['name']|string }}-lms01
+          {%- elif grains.host == my[domain]['name']|string + '-worker01' %}
+      join_node: rabbit@{{ my[domain]['name']|string }}-worker02
+          {%- elif grains.host == my[domain]['name']|string + '-worker02' %}
+      join_node: rabbit@{{ my[domain]['name']|string }}-worker01
           {%- endif %}
       config:
         # consumer_timeout = 1800000
@@ -219,21 +219,18 @@ rabbitmq:
               - '.*'
               - '.*'
               - '.*'
+
+        {%- set queues = my[domain]['queues'] %}
+        {%- if my[domain] == 'main' %}
+            {%- for wanted in my.domains %}
+                {%- set queues = queues + my[wanted]['queues'] %}
+            {%- endfor %}
+        {%- endif %}
+
       queues:
+        {%- for queue in queues %}
 
-        {%- if domain == my.primarydomain|string %}
-
-            # CONTROL PLANE: create queues for ALL domain names;
-            # one shared (many consumers); one dedicated (single consumer)
-            {%- for domainname in my.names %}
-
-                {%- set queues = ('', '-lms01', '-lms02') %}
-                {%- if domainname ==  my.primarydomain|string %}
-                    {%- set queues = ('', '-lws01', '-lws02') %}
-                {%- endif %}
-                {%- for queue in queues %}
-
-        {{ domainname }}{{ queue }}:
+        {{ queue }}:
           user: airflow
           passwd: airflow
           durable: true
@@ -242,64 +239,43 @@ rabbitmq:
           arguments: {}
           # x-queue-type: quorum  # not supported by celery yet
 
-                {%- endfor %}
-            {%- endfor %}
-        {%- else %}
-
-            # WORKER PLANE: create queues for THIS domainname
-            # one shared (many consumers); one dedicated (single consumer)
-            {%- set queues = ('', '-lms01', '-lms02') %}
+        {%- endfor %}
+        {%- if domain not in ['localdomain', 'main'] %}
             {%- for queue in queues %}
-
-        {{ my[domain]['name']|string }}{{ queue }}:
-          user: airflow
-          passwd: airflow
-          durable: true
-          auto_delete: false
-          vhost: airflow
-          arguments: {}
-          # x-queue-type: quorum  # not supported by celery yet
-
-            {%- endfor %}
+                {%- if loop.index0 == 0 %}
       parameters:
-            {%- for queue in queues %}
+                {%- endif %}
 
-        federation-upstream-queue-{{ my[domain]['name']|string }}{{ queue }}:
+        federation-upstream-queue-{{ domain }}-{{ queue }}:
           component: federation-upstream
           definition:
             uri: amqp://airflow:airflow@{{ my['loadbalancer']|string }}:5672
             trust-user-id: true
             ack-mode: on-confirm
-            queue: {{ my[domain]['name']|string }}{{ queue }}
+            queue: {{ queue }}
             expires: 3600000
           vhost: airflow
 
             {%- endfor %}
+            {%- for queue in queues %}
+                {%- if loop.index0 == 0 %}
       policies:
-
-        policy-federation-upstream-shared-queue-{{ my[domain]['name']|string }}:
+                {%- endif %}
+        policy-federation-upstream-queue-{{ domain }}-{{ queue }}:
           apply_to: queues
+          pattern: ^{{ queue }}$
+          priority: 1
+          vhost: airflow
           definition:
-            federation-upstream: federation-upstream-queue-{{ my[domain]['name']|string }}
+            federation-upstream: federation-upstream-queue-{{ domain }}-{{ queue }}
+                {%- if domain == queue %}
             ha-mode: exactly
             ha-params: 2
             ha-sync-mode: automatic
-          pattern: ^{{ my[domain]['name']|string }}$
-          priority: 1
-          vhost: airflow
-
-            {%- for queue in queues if queue != '' %}
-
-        policy-federation-upstream-dedicated-queue-{{ my[domain]['name']|string }}{{ queue }}:
-          apply_to: queues
-          definition:
-            federation-upstream: federation-upstream-queue-{{ my[domain]['name']|string }}{{ queue }}
-          pattern: ^{{ my[domain]['name']|string }}{{ queue }}$
-          priority: 1
-          vhost: airflow
+                {%- endif %}
 
             {%- endfor %}
-      {%- endif %}{# all done #}
+        {%- endif %}
 
 # https://github.com/saltstack-formulas/postgres-formula/blob/master/pillar.example
 postgres:
@@ -324,9 +300,7 @@ postgres:
     - ['host', 'all', 'all', '0.0.0.0/0', 'md5']
     - ['host', 'all', 'all', '::/0', 'md5']
     - ['host', 'all', 'all', '127.0.0.1/32', 'md5']
-    - ['host', 'all', 'all', '127.0.0.1/32', 'trust']
     - ['host', 'all', 'all', '::1/128', 'md5']
-    - ['host', 'all', 'all', '::1/128', 'trust']
     - ['local', 'replication', 'all', 'peer']
     - ['host', 'replication', 'all', '127.0.0.1/32', 'md5']
     - ['host', 'replication', 'all', '::1/128', 'md5']
