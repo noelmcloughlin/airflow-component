@@ -11,8 +11,10 @@ hostsfile:
         {%- for domainname in my.domains %}
             {%- if 'workers' in my[domainname] %}
                 {%- for k,v in my[domainname]['workers'].items() %}
+                    {%- if v not in ('127.0.0.1', '::1') %}
     {{ v }}:
       - {{ k }}
+                    {%- endif %}
                 {%- endfor %}
             {%- endif %}
         {%- endfor %}
