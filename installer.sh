@@ -41,8 +41,8 @@ sudo rm ~/go.sh ~/salter.sh 2>/dev/null
 
 echo -e "\nPreparing IAC Configuration .. very important\n"
 CFG_DIR=~/airflow-component
-sudo cp ${CFG_DIR}/sitedata.*           ${IAC_CFG_DIR}/ || exit 2
-sudo cp ${CFG_DIR}/templates/sitedata.* ${IAC_CFG_DIR}/ || exit 2
+sudo cp ${CFG_DIR}/sitedata.*            ${IAC_CFG_DIR}/ || exit 2
+sudo cp ${CFG_DIR}/templates/federated* ${IAC_CFG_DIR}/ || exit 2
 sudo cp ${CFG_DIR}/templates/installer.sls /srv/salt/top.sls || exit 4
 
 # echo -e "\nStop firewall (todo)\n"

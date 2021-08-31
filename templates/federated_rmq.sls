@@ -34,12 +34,15 @@ sudoers:
 
 # https://github.com/saltstack-formulas/airflow-formula/blob/master/pillar.example
 airflow:
+  linux:
+    selinux: {{ my.selinux }}
+    firewall: {{ my.firewall }}
   identity:
     airflow:
       user: {{ my[domain]['user']|string }}
       group: {{ my[domain]['group']|string }}
       create_user_group: {{ my['create_user_group']|string }}
-        {%- if grains.host == my.primaryhost|string or domain == 'localdomain' %}
+        {%- if grains.host == my.primaryhost|string %}
       role: localdb    # only for local testing
         {%- endif %}
   database:

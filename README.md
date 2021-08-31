@@ -1,6 +1,6 @@
 # Lightweight federated Apache-Airflow Installer
 
-This airflow-component solution is designed to provision a federated implementation architecture for apache airflow, using Configuration as Code, or a single-host deployment for localdomain.
+Provision a federated implementation architecture (or single-node) deployment of Apache Airflow (RabbitMQ and Postgres), using a single-source-of-truth Configuration as Code interface.
 
 ![Airflow-Component](/templates/img/airflow-component.png?raw=true "Federated Airflow, Reference Deployment Architecture")
 

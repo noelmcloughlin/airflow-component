@@ -1,28 +1,31 @@
 # -*- coding: utf-8 -*-
 # vim: ft=jinja2
-####################
-## APACHE AIRFLOW 
-###################
+###########################
+## APACHE AIRFLOW CHANGEME
+###########################
 {% set airflow_version = '2.1.2' %}
-{% set primarydomain   = 'localdomain' %}
-{% set loadbalancer    = 'controller01' %}
-{% set primaryhost     = 'ubuntu1804' %}
-{% set secondaryhost   = 'controller02' %}
-{% set localhost       = salt['cmd.run']('hostname') %}
+{% set localhost       = salt['cmd.run']('hostname -s') or 'localhost' or 'ubuntu1804' %}
 {% set webserversecret = '123456789101112131415' %}
 
-{% set create_user_group = true %}  # i.e. false=not-ldap, true=ldap etc
-{% set domain = salt['cmd.run']('hostname -d').split('.')[0]|lower|replace('none','localdomain') %}
-{%- set domain = 'localdomain' if domain == '' else domain %}
+{% set create_user_group = true %}            {# changeme: true=posix, false=ldap #}
+{% set selinux           = false %}           {# changeme #}
+{% set firewall          = false %}           {# changeme #}
+{% set primaryhost       = localhost %}       {# changeme #}
+{% set loadbalancer      = primaryhost %}     {# changeme #}
+{% set primarydomain     = 'localdomain' %}   {# changeme #}
+{% set secondaryhost     = 'controller02' %}  {# changeme #}
 
-#####################
-### POSSIBLE DOMAINS
-#####################
+{% set domain = salt['cmd.run']('hostname -d').split('.')[0]|lower|replace('none','localdomain') %}
+{% set domain = 'localdomain' if domain == '' else domain %}
+
+##################
+### DOMAIN LOOKUP
+##################
 {% set domains = ['localdomain', 'main', 'apples', 'oranges', 'applestest'] %}
 {% set domains = domains + ['orangestest', 'applesdev', 'orangesdev', 'edge', 'fog'] %}
 
 {# every member of "domains" list above must have corresponding defintion below, #}
-{# to stop 'TypeError: argument of type 'StrictUndefined' is not iterable' errors. #}
+{# to prevent 'TypeError: argument of type 'StrictUndefined' is not iterable' #}
 
 {% set localdomain = {} %}
 {% do localdomain.update({ 'fqdn':       '',
