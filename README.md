@@ -1,6 +1,6 @@
 # Lightweight federated Apache-Airflow Installer
 
-This airflow-component solution is designed to provision a federated implementation architecture for apache airflow, using Configuration as Code, or a single-host deployment if you prefer.
+This airflow-component solution is designed to provision a federated implementation architecture for apache airflow, using Configuration as Code, or a single-host deployment for localdomain.
 
 ![Airflow-Component](/templates/img/airflow-component.png?raw=true "Federated Airflow, Reference Deployment Architecture")
 
@@ -35,7 +35,7 @@ This airflow-component solution is designed to provision a federated implementat
 
 Declare your configuration in [https:/github.com/noelmcloughlin/airflow-component/blob/master/sitedata.j2](https://github.com/noelmcloughlin/airflow-component/blob/master/sitedata.j2)
 
-Commission your infrastructure inline with [our reference ticketing architecture](https://github.com/noelmcloughlin/airflow-component/blob/master/INFRA.md) guide.
+Commission your infrastructure inline with [our infra ticket guidelines](https://github.com/noelmcloughlin/airflow-component/blob/master/INFRA.md)
 
 Logon as airflowservice on each participating host and user, and ensure proxy is published (in ~/.bashrc).
 

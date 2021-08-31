@@ -38,7 +38,7 @@ airflow:
       group: {{ my[domain]['group']|string }}
       create_user_group: {{ my['create_user_group']|string }}
         {%- if grains.host == my.primaryhost|string or domain == 'localdomain' %}
-      role: localdb    # once DBAs take over PostgresDB deleteme.
+      role: localdb    # only for local testing
         {%- endif %}
   database:
     airflow:
@@ -53,7 +53,6 @@ airflow:
         celery:
           # https://docs.celeryproject.org/en/v5.0.2/getting-started/brokers
           broker_url: amqp://airflow:airflow@127.0.0.1:5672/airflow   # always 127.0.0.1
-          # once DBA's take over PostgresDB, changeme
           result_backend: db+postgresql://{{ my[domain]['database']|string }}
         cli: {}
         core:

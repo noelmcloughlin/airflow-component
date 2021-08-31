@@ -8,9 +8,10 @@
 {% set loadbalancer    = 'controller01' %}
 {% set primaryhost     = 'ubuntu1804' %}
 {% set secondaryhost   = 'controller02' %}
+{% set localhost       = salt['cmd.run']('hostname') %}
 {% set webserversecret = '123456789101112131415' %}
 
-{% set create_user_group = true %}  # i.e. not ldap users
+{% set create_user_group = true %}  # i.e. false=not-ldap, true=ldap etc
 {% set domain = salt['cmd.run']('hostname -d').split('.')[0]|lower|replace('none','localdomain') %}
 {%- set domain = 'localdomain' if domain == '' else domain %}
 
@@ -29,8 +30,8 @@
                            'user':       'airflow',
                            'group':      'airflow',
                            'name':       'localdomain',
-			   'queues':     ['localdomain', 'localdomain-ubuntu1804',],
-                           'workers':    {'localdomain-ubuntu1804': '127.0.0.1',},
+			   'queues':     [domain, localhost|string,],
+                           'workers':    {localhost|string: '127.0.0.1',},
                            'ldapserver': '',
                            'database':   '',
                            'ldapfilter': '',
