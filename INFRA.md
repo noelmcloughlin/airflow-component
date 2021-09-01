@@ -5,8 +5,8 @@ To assist sprint planning, this document is an exhaustive list of "ticket slogan
 
 ![Airflow-Component](/templates/img/airflow-component.png?raw=true "Federated Airflow, Reference Deployment Architecture")
 
-    primary:   controller01.controller.net  user: controller\airflowservice  - Active Scheduler, UI, worker
-    secondary: controller02.controller.net  user: controller\airflowservice  - Standby Scheduler, UI, worker
+    primary:   controller01.main.net  user: main\airflowservice  - Active Scheduler, UI, worker
+    secondary: controller02.main.net  user: main\airflowservice  - Standby Scheduler, UI, worker
 
     worker: worker01.apples.net        user: apples\airflowservice
     worker: worker02.apples.net        user: apples\airflowservice
@@ -24,8 +24,8 @@ To assist sprint planning, this document is an exhaustive list of "ticket slogan
 
     worker: worker01.edge.net          user: edge\airflowservice
     worker: worker02.edge.net          user: edge\airflowservice
-    worker: worker01.fog.net           user: airflowservice
-    worker: worker02.fog.net           user: airflowservice
+    worker: worker01.fog.net           user: fog\airflowservice
+    worker: worker02.fog.net           user: fog\airflowservice
 
 # TICKET SLOGANS
 

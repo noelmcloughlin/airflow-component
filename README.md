@@ -4,8 +4,8 @@ Provision a federated implementation architecture (or single-node) deployment of
 
 ![Airflow-Component](/templates/img/airflow-component.png?raw=true "Federated Airflow, Reference Deployment Architecture")
 
-    primary:   controller01.controller.net   user: controller\airflowservice  - Active Scheduler, UI, worker
-    secondary: controller02.controller.net   user: controller\airflowservice  - Standby Scheduler, UI, worker
+    primary:   controller01.main.net   user: main\airflowservice  - Active Scheduler, UI, worker
+    secondary: controller02.main.net   user: main\airflowservice  - Standby Scheduler, UI, worker
 
     worker: worker01.apples.net        user: apples\airflowservice
     worker: worker02.apples.net        user: apples\airflowservice
@@ -23,8 +23,8 @@ Provision a federated implementation architecture (or single-node) deployment of
 
     worker: worker01.edge.net          user: edge\airflowservice
     worker: worker02.edge.net          user: edge\airflowservice
-    worker: worker01.fog.net           user: airflowservice
-    worker: worker02.fog.net           user: airflowservice
+    worker: worker01.fog.net           user: fog\airflowservice
+    worker: worker02.fog.net           user: fog\airflowservice
 
 
 # TL'DR
@@ -84,7 +84,7 @@ Note, the installation summary may indicate failures. Evaluate result as follows
     - Success if 0 task fails: cluster join worked too. OK!
     - Success if 1 task fails: cluster join is best effort, other node was not ready. OK!
     - Retryable if >1 task fails: sometimes the 2nd attempt just works! NOK!
-    - Failure if retry is not success. Review [TROUBLESHOOTING](#TROUBLESHOOTING) section below.
+    - Failure if retry is not success. Review [INSTALL FAILURES](#INSTALL FAILURES) section below.
 
 
 # POST INSTALL
@@ -148,8 +148,12 @@ Check services:
 
 ### Log search
 
-View log file using 'vi'. Type `/Result: False` to goto failures in the ~/iac-installer.log file.
+View install log using 'vi ~/iac-installer.log'.
+To find failures type `/Result: False` to goto failed states.
 
+### Unexpected installer outcomes (something funny going on)
+
+Wipe the related directories and reinstall.
 
 ### CENTOS7
 
@@ -250,7 +254,7 @@ Test login in Airflow UI, and press CTRL+C in terminal to exit. View the logfile
 
     vi bob
 
-Fix issues (updating webserver_config.py file) and try again (start Airflow UI [repeatme]) until logins work. Then cleanup:
+Fix issues (update webserver_config.py file), try again (start Airflow UI [repeatme]) until logins work, and cleanup:
 
     unset AIRFLOW__LOGGING__FAB_LOGGING_LEVEL
     sudo systemctl start airflow-webserver

@@ -41,7 +41,7 @@ airflow:
     airflow:
       user: {{ my[domain]['user']|string }}
       group: {{ my[domain]['group']|string }}
-      create_user_group: {{ my['create_user_group']|string }}
+      create_user_group: {{ my['create_user_group'] }}
         {%- if grains.host == my.primaryhost|string %}
       role: localdb    # only for local testing
         {%- endif %}
@@ -110,7 +110,6 @@ airflow:
         scheduled: 'tan'
   service:
     airflow:
-      worker_run_as_sudo: true
       enabled:
         - airflow-celery-flower
         - airflow-celery-worker
@@ -123,6 +122,15 @@ airflow:
       queues:   # to listen to
         - {{ my[domain]['name']|string }}
         - {{ grains.host }}
+      ports:
+        - 5432/tcp
+        - 8793/tcp
+        - 5555/tcp
+        - 5672/tcp
+        - 25672/tcp
+        - 4369/tcp
+        - 15672/tcp
+        - 18080/tcp
   pkg:
     airflow:
       ################################
