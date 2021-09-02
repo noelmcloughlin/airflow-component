@@ -11,7 +11,7 @@ components="airflow rabbitmq postgres redis hostsfile sudoers"
 
 # garbage collection (can salter do this?)
 for comp in ${components}; do
-    sudo rm -fr ${IAC_RUN_DIR}/${comp}-formula/airflow 2>/dev/null  # salter should do this!!
+    sudo rm -fr ${IAC_RUN_DIR}/${comp}-formula /srv/salt/${comp} 2>/dev/null
 done
 CENTOS7_TECH_DEBT=$( rpm -E %{rhel} 2>/dev/null )
 (( $? == 0 )) && (( CENTOS7_TECH_DEBT == 7 )) && export SALT_VERSION='stable 3001'
@@ -25,17 +25,14 @@ fi
 
 # garbage collection (can salter do this? salter#84)
 for comp in ${components}; do
-    sudo ln -s  ${IAC_RUN_DIR}/${comp}-formula /srv/salt/${comp} 2>/dev/null
+    sudo ln -s ${IAC_RUN_DIR}/${comp}-formula/${comp} /srv/salt/${comp} 2>/dev/null
 done
 
 # Salter populates ${IAC_CFG_DIR} with defaults, remove them
 [[ "${IAC_CFG_DIR}x" == "/x" ]] && echo -e "\nwarning: variable IAC_CFG_DIR evaluates to /" && exit 12
 sudo rm -fr ${IAC_CFG_DIR}/* /srv/salt/top.sls 2>/dev/null  # recursive delete
 sudo rm ~/go.sh ~/salter.sh ~/air.tar 2>/dev/null
-
-# garbage collection
-echo -e "\nWorkaround Airflow version < 2.2 does not support different dag_home paths\n"
-sudo ln -s /home/$(id -un) /home/_airflowservice@GBECORP.GBE.global 2>/dev/null
+sudo rm ~/_airflowservice@*lobal 2>/dev/null
 
 echo -e "\nPreparing Configuration as Code\n"
 CFG_DIR=~/airflow-component

@@ -122,15 +122,17 @@ airflow:
       queues:   # to listen to
         - {{ my[domain]['name']|string }}
         - {{ grains.host }}
-      ports:
-        - 5432/tcp
-        - 8793/tcp
-        - 5555/tcp
-        - 5672/tcp
-        - 25672/tcp
-        - 4369/tcp
-        - 15672/tcp
-        - 18080/tcp
+      firewall:
+        zone: {{ my[domain]['firezone']|string }}
+        ports:
+          - 4369/tcp  # epmd
+          - 5432/tcp  # postgres
+          - 5555/tcp  # celeryflower
+          - 5672/tcp  # rabbitmq-amqp
+          - 8793/tcp  # airflow-logs
+          - 15672/tcp  # rabbitmq-ui
+          - 25672/tcp  # rabbitmq
+          - 18080/tcp  # airflow-ui
   pkg:
     airflow:
       ################################
