@@ -116,7 +116,7 @@ airflow:
               {%- if grains.host == my.primaryhost|string %}
         - airflow-scheduler
               {%- endif %}
-              {%- if my[domain]['name'] == my.primarydomain|string %}
+              {%- if my[domain]['name'] == my.primarydomain %}
         - airflow-webserver
               {%- endif %}
       queues:   # to listen to
@@ -236,7 +236,7 @@ rabbitmq:
               - '.*'
 
         {%- set queues = my[domain]['queues'] %}
-        {%- if my[domain] == 'main' %}
+        {%- if my[domain] == my.primarydomain %}
             {%- for wanted in my.domains %}
                 {%- set queues = queues + my[wanted]['queues'] %}
             {%- endfor %}
@@ -255,7 +255,7 @@ rabbitmq:
           # x-queue-type: quorum  # not supported by celery yet
 
         {%- endfor %}
-        {%- if domain not in ['localdomain', 'main'] %}
+        {%- if domain not in ['localdomain', my.primarydomain] %}
             {%- for queue in queues %}
                 {%- if loop.index0 == 0 %}
       parameters:

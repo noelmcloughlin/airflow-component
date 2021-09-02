@@ -1,7 +1,6 @@
 # Lightweight federated Apache-Airflow Installer
 
-Provision a federated implementation architecture (or single-node) deployment of Apache Airflow (RabbitMQ and Postgres), using a single-source-of-truth Configuration as Code interface.
-
+Provision federated (or single-node) reference deployment architecture of Apache Airflow (RabbitMQ, Postgres), via lightweight single-source-of-truth installer. Heavy lifting/CI by [Saltstack-formulas community](https://github.com/saltstack-formulas).
 ![Airflow-Component](/templates/img/airflow-component.png?raw=true "Federated Airflow, Reference Deployment Architecture")
 
     primary:   controller01.main.net  user: main\airflowservice  - Active Scheduler, UI, worker
@@ -39,25 +38,23 @@ Optionally wipe data on any-all servers before reinstall. If unsure, skip this c
 
 # (RE)INSTALL/UPGRADE
 
-Logon as airflowservice on participating hosts and users. Get the software:
+Logon as airflowservice on participating hosts and users. Get the software: For hosts without network connectivity to your git (i.e. from fog), use another method, i.e. sftp, see [SUPPORT](https://github.com/noelmcloughlin/airflow-component/blob/master/SUPPORT.md)
 
     cd && rm -fr airflow-component airflow-dags
     for name in component dags; do
         git clone https://github.com/noelmcloughlin/airflow-${name}
     done && cd ~/dags && rm -fr * && cp -Rp ../airflow-dags/dags/* .; chmod +x $( find . -name *.py)
 
-Note, for hosts without network connectivity to your git (i.e. from fog), use another method (i.e. sftp), see [SUPPORT](https://github.com/noelmcloughlin/airflow-component/blob/master/SUPPORT.md)
-
-On each participating host (begin with primary/secondary), install Airflow. The process takes ~15mins on small VM:
+On each participating host (begin with primary/secondary), install Airflow. Duration is ~15-30mins depending on compute resources:
 
     ~/airflow-component/installer.sh | tee ~/iac-installer.log
 
-Note, the installation summary may indicate failures. Evaluate result as follows:
+Note, the installation summary may indicate failures. Evaluate result as follows. For failures see [SUPPORT](https://github.com/noelmcloughlin/airflow-component/blob/master/SUPPORT.md)
 
     - Success if 0 task fails: cluster join worked too. OK!
-    - Success if 1 task fails: cluster join is best effort, other node was not ready. OK!
+    - Success if 1 task fails: cluster join is best effort, other node was not ready (race condition). OK!
     - Retryable if >1 task fails: sometimes the 2nd attempt just works! NOK!
-    - For all other outcomes see [TROUBLESHOOTING](#TROUBLESHOOTING).
+    - All other outcomes are failures.
 
 Import variables:
 

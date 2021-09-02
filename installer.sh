@@ -40,7 +40,7 @@ sudo cp ${CFG_DIR}/sitedata.*          ${IAC_CFG_DIR}/ || exit 2
 sudo cp ${CFG_DIR}/templates/federate* ${IAC_CFG_DIR}/ || exit 2
 sudo cp ${CFG_DIR}/templates/installer.sls /srv/salt/top.sls || exit 4
 
-echo -e "\n Installing Airflow ... please wait patiently or come back in ~15 mins\n"
+echo -e "\n Installing Airflow ... please wait patiently or come back in ~15-30 mins\n"
 sudo salt-call state.highstate --local
 sudo systemctl stop salt-master && sudo systemctl disable salt-master  # service not needed
 

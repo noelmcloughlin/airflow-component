@@ -46,6 +46,9 @@ Check services:
     systemctl status airflow-celery-flower     # active
     systemctl status rabbitmq-server           # active all servers
 
+## DB ISSUES
+
+During installation 'db init' fails with [airflow._vendor.connexion.exceptions.ResolverError: <ResolverError: columns>](https://stackoverflow.com/questions/67328545/error-while-initializing-database-in-apache-airflow-below-is-the-attached-error). Cause is unknown so retry install (change something).
 
 ## INSTALL ISSUES
 
