@@ -4,28 +4,12 @@ Provision a federated implementation architecture (or single-node) deployment of
 
 ![Airflow-Component](/templates/img/airflow-component.png?raw=true "Federated Airflow, Reference Deployment Architecture")
 
-    primary:   controller01.main.net   user: main\airflowservice  - Active Scheduler, UI, worker
-    secondary: controller02.main.net   user: main\airflowservice  - Standby Scheduler, UI, worker
-
-    worker: worker01.apples.net        user: apples\airflowservice
-    worker: worker02.apples.net        user: apples\airflowservice
-    worker: worker01.applestest.net    user: applestest\airflowservice
-    worker: worker02.applestest.net    user: applestest\airflowservice
-    worker: worker01.applesdev.net     user: applesdev\airflowservice
-    worker: worker02.applesdev.net     user: applesdev\airflowservice
-
-    worker: worker01.oranges.net       user: oranges\airflowservice
-    worker: worker02.oranges.net       user: oranges\airflowservice
-    worker: worker01.orangestest.net   user: orangestest\airflowservice
-    worker: worker02.orangestest.net   user: orangestest\airflowservice
-    worker: worker01.orangesdev.net    user: orangesdev\airflowservice
-    worker: worker02.orangesdev.net    user: orangesdev\airflowservice
-
-    worker: worker01.edge.net          user: edge\airflowservice
-    worker: worker02.edge.net          user: edge\airflowservice
-    worker: worker01.fog.net           user: fog\airflowservice
-    worker: worker02.fog.net           user: fog\airflowservice
-
+    primary:   controller01.main.net  user: main\airflowservice  - Active Scheduler, UI, worker
+    secondary: controller02.main.net  user: main\airflowservice  - Standby Scheduler, UI, worker
+    worker01/02: apples, applesdev, applestest
+    worker01/02: oranges, orangesdev, orangestest
+    worker01/02: edge
+    worker01/02: fog
 
 # TL'DR
 
@@ -75,29 +59,29 @@ Note, the installation summary may indicate failures. Evaluate result as follows
     - Success if 0 task fails: cluster join worked too. OK!
     - Success if 1 task fails: cluster join is best effort, other node was not ready. OK!
     - Retryable if >1 task fails: sometimes the 2nd attempt just works! NOK!
-    - Everything else needs troubleshooting. Refer to [SUPPORT](https://github.com/noelmcloughlin/airflow-component/blob/master/SUPPORT.md)
+    - For all other outcomes see [TROUBLESHOOTING](#TROUBLESHOOTING).
 
-
-# POST INSTALL
-
-On primary or secondary host, import airflow variables:
+On primary or secondary host, import variables:
 
     airflow variables import ~/airflow-dags/variables.json
 
+# USER INTERFACE
 
-## AIRFLOW UI
-
+Airflow:
 - http://primary.controller.net:18080    (user/pass: airflow/airflow or custom)
 - http://secondary.controller.net:18080  (user/pass: ditto)
 
-### RabbitMQ UI
-
+RabbitMQ:
 - http://primary.controller.net:15672    (user/pass: airflow/airflow)
 - http://secondary.controller.net:15672  (user/pass: airflow/airflow)
 - http://[worker-ipaddr]:15672           (user/pass: airflow/airflow)
 
-### Celery Flower UI
-
+Celery Flower:
 - http://primary.controller.net:5555
 - http://secondary.controller.net:5555
 - http://[worker-ipaddr]:5555
+
+# TROUBLESHOOTING
+
+See [SUPPORT](https://github.com/noelmcloughlin/airflow-component/blob/master/SUPPORT.md)
+

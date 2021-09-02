@@ -7,25 +7,10 @@ To assist sprint planning, this document is an exhaustive list of "ticket slogan
 
     primary:   controller01.main.net  user: main\airflowservice  - Active Scheduler, UI, worker
     secondary: controller02.main.net  user: main\airflowservice  - Standby Scheduler, UI, worker
-
-    worker: worker01.apples.net        user: apples\airflowservice
-    worker: worker02.apples.net        user: apples\airflowservice
-    worker: worker01.applestest.net    user: applestest\airflowservice
-    worker: worker02.applestest.net    user: applestest\airflowservice
-    worker: worker01.applesdev.net     user: applesdev\airflowservice
-    worker: worker02.applesdev.net     user: applesdev\airflowservice
-
-    worker: worker01.oranges.net       user: oranges\airflowservice
-    worker: worker02.oranges.net       user: oranges\airflowservice
-    worker: worker01.orangestest.net   user: orangestest\airflowservice
-    worker: worker02.orangestest.net   user: orangestest\airflowservice
-    worker: worker01.orangesdev.net    user: orangesdev\airflowservice
-    worker: worker02.orangesdev.net    user: orangesdev\airflowservice
-
-    worker: worker01.edge.net          user: edge\airflowservice
-    worker: worker02.edge.net          user: edge\airflowservice
-    worker: worker01.fog.net           user: fog\airflowservice
-    worker: worker02.fog.net           user: fog\airflowservice
+    worker01/02: apples, applesdev, applestest
+    worker01/02: oranges, orangesdev, orangestest
+    worker01/02: edge
+    worker01/02: fog
 
 # TICKET SLOGANS
 
