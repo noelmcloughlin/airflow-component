@@ -39,18 +39,16 @@ Optionally wipe data on any-all servers before reinstall. If unsure, skip this c
 
 # (RE)INSTALL/UPGRADE
 
-Logon as airflowservice on participating hosts and users.
-
-Get the software:
+Logon as airflowservice on participating hosts and users. Get the software:
 
     cd && rm -fr airflow-component airflow-dags
     for name in component dags; do
         git clone https://github.com/noelmcloughlin/airflow-${name}
     done && cd ~/dags && rm -fr * && cp -Rp ../airflow-dags/dags/* .; chmod +x $( find . -name *.py)
 
-Note, for hosts with no network connectivity to your git repo (i.e. fog), use another transfer method (i.e. sftp). Refer to [SUPPORT](https://github.com/noelmcloughlin/airflow-component/blob/master/SUPPORT.md)
+Note, for hosts without network connectivity to your git (i.e. from fog), use another method (i.e. sftp), see [SUPPORT](https://github.com/noelmcloughlin/airflow-component/blob/master/SUPPORT.md)
 
-On each participating host (begin with primary/secondary), install Airflow. The process takes ~15mins:
+On each participating host (begin with primary/secondary), install Airflow. The process takes ~15mins on small VM:
 
     ~/airflow-component/installer.sh | tee ~/iac-installer.log
 
@@ -61,24 +59,24 @@ Note, the installation summary may indicate failures. Evaluate result as follows
     - Retryable if >1 task fails: sometimes the 2nd attempt just works! NOK!
     - For all other outcomes see [TROUBLESHOOTING](#TROUBLESHOOTING).
 
-On primary or secondary host, import variables:
+Import variables:
 
     airflow variables import ~/airflow-dags/variables.json
 
 # USER INTERFACE
 
 Airflow:
-- http://primary.controller.net:18080    (user/pass: airflow/airflow or custom)
-- http://secondary.controller.net:18080  (user/pass: ditto)
+- http://primary.main.net:18080    (user/pass: airflow/airflow or custom)
+- http://secondary.main.net:18080  (user/pass: ditto)
 
 RabbitMQ:
-- http://primary.controller.net:15672    (user/pass: airflow/airflow)
-- http://secondary.controller.net:15672  (user/pass: airflow/airflow)
+- http://primary.main.net:15672    (user/pass: airflow/airflow)
+- http://secondary.main.net:15672  (user/pass: airflow/airflow)
 - http://[worker-ipaddr]:15672           (user/pass: airflow/airflow)
 
 Celery Flower:
-- http://primary.controller.net:5555
-- http://secondary.controller.net:5555
+- http://primary.main.net:5555
+- http://secondary.main.net:5555
 - http://[worker-ipaddr]:5555
 
 # TROUBLESHOOTING

@@ -21,7 +21,7 @@ For hosts without network connectivity to git you could use sftp:
 
 Ensure the proxy is applied in the environment (`env | grep -i proxy`).
 
-Ensure firewalld is configured (`systemctl status/disable/stop firewalld`).
+Firewalld and Selinux is supported!
 
 Ensure servers use NTP synchronization. If not then fix (i.e. sync/enable/start ntp):
 
