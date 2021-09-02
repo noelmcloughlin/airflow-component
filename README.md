@@ -17,7 +17,7 @@ Provision a federated implementation architecture (or single-node) deployment of
 
 # PREPARE
 
-Declare your configuration in [https:/github.com/noelmcloughlin/airflow-component/blob/master/sitedata.j2](https://github.com/noelmcloughlin/airflow-component/blob/master/sitedata.j2)
+Declare your configuration in [sitedata.j2](https://github.com/noelmcloughlin/airflow-component/blob/master/sitedata.j2)
 
 Commission your infrastructure inline with [our infra ticket guidelines](https://github.com/noelmcloughlin/airflow-component/blob/master/INFRA.md)
 
