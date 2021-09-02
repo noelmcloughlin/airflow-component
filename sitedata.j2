@@ -4,19 +4,19 @@
 ## APACHE AIRFLOW CHANGEME
 ###########################
 {% set airflow_version = '2.1.2' %}
-{% set localhost       = salt['cmd.run']('hostname -s') or 'localhost' or 'ubuntu1804' %}
+
+{% set localhost = salt['cmd.run']('hostname -s') or 'localhost' or 'ubuntu1804' %}
+{% set domain    = salt['cmd.run']('hostname -d').split('.')[0]|lower|replace('none','localdomain') %}
+{% set domain    = 'localdomain' if domain == '' else domain %}
 {% set webserversecret = '123456789101112131415' %}
 
 {% set create_user_group = true %}            {# changeme: true=posix, false=ldap #}
 {% set selinux           = false %}           {# changeme #}
 {% set firewall          = false %}           {# changeme #}
-{% set primaryhost       = localhost %}       {# changeme #}
-{% set loadbalancer      = primaryhost %}     {# changeme #}
-{% set primarydomain     = 'localdomain' %}   {# changeme #}
-{% set secondaryhost     = 'controller02' %}  {# changeme #}
-
-{% set domain = salt['cmd.run']('hostname -d').split('.')[0]|lower|replace('none','localdomain') %}
-{% set domain = 'localdomain' if domain == '' else domain %}
+{% set primaryhost       = localhost %}       {# changeme if multinode #}
+{% set loadbalancer      = primaryhost %}     {# changeme if available #}
+{% set primarydomain     = domain %}          {# changeme if multinode #}
+{% set secondaryhost     = 'controller02' %}  {# changeme if multinode #}
 
 ##################
 ### DOMAIN LOOKUP
