@@ -8,16 +8,20 @@
 # https://github.com/saltstack-formulas/hostsfile-formula/blob/master/pillar.example
 hostsfile:
   only:
-        {%- for domainname in my.domains %}
-            {%- if 'workers' in my[domainname] %}
-                {%- for k,v in my[domainname]['workers'].items() %}
-                    {%- if v not in ('127.0.0.1', '::1') %}
+        {%- if domain == 'localdomain' %}
+    198.51.100.1: []   # dummy entry
+        {%- else %}
+            {%- for domainname in my.domains %}
+                {%- if 'workers' in my[domainname] %}
+                    {%- for k,v in my[domainname]['workers'].items() %}
+                        {%- if v not in ('127.0.0.1', '::1') %}
     {{ v }}:
       - {{ k }}
-                    {%- endif %}
-                {%- endfor %}
-            {%- endif %}
-        {%- endfor %}
+                        {%- endif %}
+                    {%- endfor %}
+                {%- endif %}
+            {%- endfor %}
+        {%- endif %}
 
 # https://github.com/saltstack-formulas/sudoers-formula/blob/master/pillar.example
 sudoers:
