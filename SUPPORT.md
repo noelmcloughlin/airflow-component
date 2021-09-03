@@ -61,6 +61,12 @@ To find failures type `/Result: False` to goto failed states.
 
 Wipe the related directories and reinstall.
 
+### ARCHLINUX
+
+You need Salt python3 installed:
+
+    pacman -Sy base-devel curl; curl -sSL https://aur.archlinux.org/cgit/aur.git/snapshot/salt-py3.tar.gz | tar xz; 
+
 ### CENTOS7
 
 ### Install stuck on same step for long time
