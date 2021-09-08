@@ -34,6 +34,9 @@ sudo rm -fr ${IAC_CFG_DIR}/* /srv/salt/top.sls 2>/dev/null  # recursive delete
 sudo rm ~/go.sh ~/salter.sh ~/air.tar 2>/dev/null
 sudo rm ~/_airflowservice@*lobal 2>/dev/null
 
+# https://github.com/noelmcloughlin/airflow-component/issues/2
+pip install pywinrm[credssp,kerberos] >/dev/null 2>&1
+
 echo -e "\nPreparing Configuration as Code\n"
 CFG_DIR=~/airflow-component
 sudo cp ${CFG_DIR}/sitedata.*          ${IAC_CFG_DIR}/ || exit 2
@@ -60,4 +63,8 @@ if [[ -x /usr/sbin/ntpd ]]; then
     sudo ntpd -gq
     sudo systemctl start ntpd
 fi
+
+# https://github.com/noelmcloughlin/airflow-component/issues/2
+pip install pywinrm[credssp,kerberos]
+
 echo -e "\ndone\n"
