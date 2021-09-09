@@ -20,7 +20,9 @@ Declare your configuration in [sitedata.j2](https://github.com/noelmcloughlin/ai
 
 Commission your infrastructure inline with [our infra ticket guidelines](https://github.com/noelmcloughlin/airflow-component/blob/master/INFRA.md)
 
-Logon as airflowservice on each participating host and user, and ensure proxy is published (in ~/.bashrc).
+Logon as airflowservice on each participating host and user.
+
+Ensure proxy is published ~/.bashrc and ~/airflow-component/installer.sh files if applicable:
 
     export HTTP_PROXY="http://myproxy:8080"
     export HTTPS_PROXY="http://myproxy:8080"
@@ -31,7 +33,7 @@ Logon as airflowservice on each participating host and user, and ensure proxy is
 
 Plan to deploy primary/secondary hosts before workers.
 
-Optionally wipe data on any-all servers before reinstall. If unsure, skip this command:
+Optionally wipe data on any-all servers before reinstall. Normally this is not needed!!
 
     sudo rm -fr ~/.local /var/lib/rabbitmq/ /var/log/rabbitmq/ /usr/lib/systemd/system/rabbitmq-serv* /usr/lib/systemd/system/airflow-* /etc/rabbitmq/ /var/lib/pgsql /srv/salt && sudo reboot
 
